@@ -1,0 +1,53 @@
+<view class="admin-page">
+  <view class="admin-header">
+    <view>
+      <view class="eyebrow">店长配置</view>
+      <view class="title">会员等级</view>
+    </view>
+    <view class="pill">{{levels.length}} 档</view>
+  </view>
+
+  <button class="switch-admin" bindtap="onOpenMeals">去配置餐食</button>
+
+  <view class="level-list">
+    <view
+      wx:for="{{levels}}"
+      wx:key="id"
+      class="level-row {{selectedLevelId === item.id ? 'level-row-active' : ''}}"
+      bindtap="onSelectLevel"
+      data-id="{{item.id}}"
+    >
+      <view class="level-swatch" style="background: {{item.color}}"></view>
+      <view class="level-main">
+        <view class="level-name">{{item.name}}</view>
+        <view class="level-note">{{item.note}}</view>
+      </view>
+      <view class="level-rank">Lv.{{item.rank}}</view>
+    </view>
+  </view>
+
+  <view class="editor panel">
+    <view class="section-title">编辑等级</view>
+
+    <view class="field">
+      <view class="label">等级名称</view>
+      <input class="input" value="{{draft.name}}" bindinput="onNameInput" placeholder="例如：基础会员" />
+    </view>
+
+    <view class="field">
+      <view class="label">权益说明</view>
+      <textarea class="textarea" value="{{draft.note}}" bindinput="onNoteInput" placeholder="例如：可享轻食与基础饮品" />
+    </view>
+
+    <view class="field">
+      <view class="label">标签颜色</view>
+      <view class="color-row">
+        <view class="preview" style="background: {{draft.color}}"></view>
+        <input class="input color-input" value="{{draft.color}}" bindinput="onColorInput" placeholder="#6f7f8f" />
+      </view>
+    </view>
+
+    <view wx:if="{{feedback}}" class="feedback">{{feedback}}</view>
+    <button class="save-button" bindtap="onSaveLevel">保存等级</button>
+  </view>
+</view>

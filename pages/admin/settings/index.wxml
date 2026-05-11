@@ -1,0 +1,67 @@
+<view class="admin-page">
+  <view class="admin-header">
+    <view>
+      <view class="eyebrow">门店配置</view>
+      <view class="title">门店设置</view>
+    </view>
+    <view class="pill">{{settings.isOpen ? '营业中' : '已暂停'}}</view>
+  </view>
+
+  <view class="panel">
+    <view class="section-title">基础信息</view>
+    <view class="field">
+      <view class="label">门店名称</view>
+      <input class="input" value="{{settings.storeName}}" bindinput="onStoreNameInput" placeholder="请输入门店名称" />
+    </view>
+    <view class="switch-row">
+      <view>
+        <view class="label">营业状态</view>
+        <view class="hint">暂停后顾客端不能提交订单</view>
+      </view>
+      <switch checked="{{settings.isOpen}}" bindchange="onOpenChange" />
+    </view>
+  </view>
+
+  <view class="settings-grid">
+    <view class="room-list panel">
+      <view class="section-title">房间/区域</view>
+      <view
+        wx:for="{{settings.locations}}"
+        wx:key="id"
+        class="room-row {{selectedRoomId === item.id ? 'room-row-active' : ''}}"
+        bindtap="onSelectRoom"
+        data-id="{{item.id}}"
+      >
+        <view>
+          <view class="room-name">{{item.name}}</view>
+          <view class="room-meta">{{item.tables.length}} 个桌号</view>
+        </view>
+        <view class="status-tag {{item.enabled ? '' : 'status-tag-muted'}}">{{item.enabled ? '启用' : '停用'}}</view>
+      </view>
+      <button class="create-button" bindtap="onCreateRoom">新增区域</button>
+    </view>
+
+    <view class="panel">
+      <view class="section-title">编辑区域</view>
+      <view class="field">
+        <view class="label">区域名称</view>
+        <input class="input" value="{{roomDraft.name}}" bindinput="onRoomNameInput" placeholder="例如：VIP包厢1" />
+      </view>
+      <view class="field">
+        <view class="label">桌号</view>
+        <textarea class="textarea" value="{{tableText}}" bindinput="onTableTextInput" placeholder="用顿号或换行分隔，例如：桌号1、桌号2"></textarea>
+      </view>
+      <view class="switch-row">
+        <view>
+          <view class="label">区域状态</view>
+          <view class="hint">停用后顾客端不再展示该区域</view>
+        </view>
+        <switch checked="{{roomDraft.enabled}}" bindchange="onRoomEnabledChange" />
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="feedback">正在同步门店设置...</view>
+  <view wx:elif="{{feedback}}" class="feedback">{{feedback}}</view>
+  <button class="save-button save-wide" bindtap="onSaveSettings" disabled="{{loading}}">保存门店设置</button>
+</view>

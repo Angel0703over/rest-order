@@ -1,0 +1,38 @@
+<view class="admin-page">
+  <view class="admin-header">
+    <view>
+      <view class="eyebrow">店长配置</view>
+      <view class="title">分类管理</view>
+    </view>
+    <view class="pill">{{categories.length}} 类</view>
+  </view>
+
+  <button class="create-button" bindtap="onCreateCategory">新增分类</button>
+
+  <view class="category-list">
+    <view
+      wx:for="{{categories}}"
+      wx:key="id"
+      class="category-row {{selectedCategoryId === item.id ? 'category-row-active' : ''}}"
+      bindtap="onSelectCategory"
+      data-id="{{item.id}}"
+    >
+      <view class="category-name">{{item.name}}</view>
+      <view class="category-id">{{item.id}}</view>
+    </view>
+  </view>
+
+  <view class="editor panel">
+    <view class="section-title">编辑分类</view>
+    <view class="field">
+      <view class="label">分类名称</view>
+      <input class="input" value="{{draft.name}}" bindinput="onNameInput" placeholder="例如：饮品" />
+    </view>
+
+    <view wx:if="{{feedback}}" class="feedback">{{feedback}}</view>
+    <view class="actions">
+      <button class="delete-button" bindtap="onDeleteCategory">删除</button>
+      <button class="save-button" bindtap="onSaveCategory">保存</button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/orders/index",
+    "pages/profile/index",
+    "pages/no-access/index",
+    "pages/staff/home/index",
+    "pages/admin/home/index",
+    "pages/admin/settings/index",
+    "pages/admin/staff/index",
+    "pages/admin/categories/index",
+    "pages/admin/levels/index",
+    "pages/admin/meals/index",
+    "pages/admin/orders/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "休息点单",
+    "navigationBarBackgroundColor": "#f7eee8",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f7eee8"
+  },
+  "tabBar": {
+    "color": "#8b7469",
+    "selectedColor": "#2f2520",
+    "backgroundColor": "#fffaf6",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "点单"
+      },
+      {
+        "pagePath": "pages/orders/index",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

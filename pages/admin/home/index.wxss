@@ -1,0 +1,78 @@
+@import "../common.wxss";
+
+.workbench-card {
+  align-items: center;
+  background: #2f2520;
+  border-radius: 14rpx;
+  color: #fff8f2;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18rpx;
+  padding: 22rpx;
+}
+
+.workbench-title {
+  font-size: 31rpx;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.workbench-text {
+  color: rgba(255, 248, 242, 0.72);
+  font-size: 22rpx;
+  line-height: 1.45;
+  margin-top: 8rpx;
+}
+
+.workbench-count {
+  align-items: center;
+  background: rgba(255, 248, 242, 0.12);
+  border-radius: 999rpx;
+  display: flex;
+  flex: 0 0 auto;
+  font-size: 34rpx;
+  font-weight: 700;
+  height: 72rpx;
+  justify-content: center;
+  margin-left: 18rpx;
+  width: 72rpx;
+}
+
+.module-list {
+  display: grid;
+  gap: 12rpx;
+}
+
+.module-card {
+  align-items: center;
+  background: #fffaf6;
+  border: 1rpx solid rgba(120, 82, 66, 0.1);
+  border-radius: 14rpx;
+  display: flex;
+  justify-content: space-between;
+  padding: 18rpx;
+}
+
+.module-title {
+  color: #2f2520;
+  font-size: 29rpx;
+  font-weight: 700;
+}
+
+.module-desc {
+  color: #8b7469;
+  font-size: 22rpx;
+  line-height: 1.42;
+  margin-top: 6rpx;
+}
+
+.module-arrow {
+  background: #f0e4dc;
+  border-radius: 999rpx;
+  color: #7a4f3e;
+  flex: 0 0 auto;
+  font-size: 22rpx;
+  font-weight: 700;
+  margin-left: 16rpx;
+  padding: 9rpx 14rpx;
+}

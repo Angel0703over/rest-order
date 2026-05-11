@@ -1,0 +1,64 @@
+.page {
+  background: #f7eee8;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 36rpx 28rpx 56rpx;
+}
+
+.member-card,
+.stats {
+  background: #2f2520;
+  border-radius: 18rpx;
+  color: #fff8f2;
+  padding: 30rpx;
+}
+
+.member-name {
+  font-size: 42rpx;
+  font-weight: 700;
+}
+
+.member-phone,
+.level-note,
+.label {
+  color: rgba(255, 248, 242, 0.72);
+  font-size: 24rpx;
+}
+
+.level-badge {
+  background: #b48732;
+  border-radius: 999rpx;
+  display: inline-flex;
+  font-size: 24rpx;
+  font-weight: 700;
+  margin: 22rpx 0 12rpx;
+  padding: 10rpx 18rpx;
+}
+
+.stats {
+  background: #fffaf6;
+  color: #2f2520;
+  display: grid;
+  gap: 18rpx;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 22rpx;
+}
+
+.num {
+  font-size: 44rpx;
+  font-weight: 700;
+}
+
+.label {
+  color: #8b7469;
+}
+
+.notice {
+  background: #fff3cf;
+  border-radius: 12rpx;
+  color: #7a4f3e;
+  font-size: 24rpx;
+  line-height: 1.4;
+  margin-bottom: 18rpx;
+  padding: 16rpx;
+}

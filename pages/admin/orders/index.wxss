@@ -1,0 +1,89 @@
+@import "../common.wxss";
+
+.empty-title {
+  color: #2f2520;
+  font-size: 29rpx;
+  font-weight: 700;
+}
+
+.empty-text {
+  color: #8b7469;
+  font-size: 23rpx;
+  margin-top: 8rpx;
+}
+
+.order-list {
+  display: grid;
+  gap: 14rpx;
+}
+
+.order-card {
+  background: #fffaf6;
+  border: 1rpx solid rgba(120, 82, 66, 0.1);
+  border-radius: 14rpx;
+  padding: 18rpx;
+}
+
+.order-head,
+.order-line {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.order-id {
+  color: #2f2520;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.order-time {
+  color: #8b7469;
+  font-size: 22rpx;
+  margin-top: 5rpx;
+}
+
+.location-box {
+  background: #f7eee8;
+  border-radius: 12rpx;
+  margin-top: 16rpx;
+  padding: 16rpx;
+}
+
+.location-label {
+  color: #8b7469;
+  font-size: 21rpx;
+}
+
+.location-text {
+  color: #2f2520;
+  font-size: 34rpx;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: 6rpx;
+}
+
+.order-line {
+  color: #6b554d;
+  font-size: 24rpx;
+  gap: 18rpx;
+  margin-top: 14rpx;
+}
+
+.order-line text:last-child {
+  color: #2f2520;
+  flex: 1;
+  font-weight: 700;
+  text-align: right;
+}
+
+.status-picker {
+  background: #2f2520;
+  border-radius: 12rpx;
+  color: #fff8f2;
+  font-size: 27rpx;
+  font-weight: 700;
+  line-height: 72rpx;
+  margin-top: 18rpx;
+  text-align: center;
+}

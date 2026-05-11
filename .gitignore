@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+miniprogram_npm/
+cloudfunctions/node_modules/
+cloudfunctions/**/node_modules/
+
+# WeChat Developer Tools local files
+project.private.config.json
+*.private.config.json
+.idea/
+.vscode/
+
+# Environment and secrets
+.env
+.env.*
+*.local
+*.local.*
+secret.*
+secrets.*
+*.key
+*.pem
+*.p12
+*.mobileprovision
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build and cache output
+dist/
+build/
+coverage/
+.cache/
+.temp/
+tmp/
+temp/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local screenshots and ad-hoc reference images
+微信图片_*.jpg
+微信图片_*.png
+*.tmp.png
+*.tmp.jpg
+
+# CloudBase local debug/runtime artifacts
+.cloudbase/
+.tccli/
+tcb-debug.log*
+cloudbase-debug.log*
+
+# Keep cloud database seed files, but ignore exported backups by default.
+cloud-database/exports/
+cloud-database/backups/

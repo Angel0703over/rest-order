@@ -1,0 +1,102 @@
+<view class="page">
+  <view class="topbar">
+    <view>
+      <view class="eyebrow">{{store.entryHint}}</view>
+      <view class="title">{{store.name}}</view>
+    </view>
+    <view class="scan-chip">{{storeOpen ? store.miniProgramTag : '暂停点单'}}</view>
+  </view>
+
+  <view wx:if="{{!storeOpen}}" class="notice">门店已暂停点单，请联系店员协助。</view>
+
+  <view class="section-head">
+    <view>
+      <view class="section-title">{{store.menuTitle}}</view>
+      <view class="section-subtitle">{{store.menuSubtitle}}</view>
+    </view>
+    <view class="count">{{meals.length}} 款</view>
+  </view>
+
+  <view class="location-panel">
+    <view class="section-title">所在位置</view>
+    <view class="location-row">
+      <picker mode="selector" range="{{locations}}" range-key="name" value="{{selectedRoomIndex}}" bindchange="onRoomChange">
+        <view class="location-picker">{{selectedRoom.name}}</view>
+      </picker>
+      <picker mode="selector" range="{{selectedRoom.tables}}" range-key="name" value="{{selectedTableIndex}}" bindchange="onTableChange">
+        <view class="location-picker">{{selectedTable.name}}</view>
+      </picker>
+    </view>
+    <view class="location-hint">店长会看到：{{currentMember.nickname}} 在 {{selectedLocationText}} 下单</view>
+  </view>
+
+  <view wx:if="{{menuState.type !== 'ready'}}" class="state-card state-{{menuState.type}}">
+    <view class="state-icon">{{menuState.type === 'offline' ? '!' : '·'}}</view>
+    <view>
+      <view class="state-title">{{menuState.title}}</view>
+      <view class="state-message">{{menuState.message}}</view>
+    </view>
+    <button wx:if="{{menuState.type === 'offline'}}" class="state-button" bindtap="onRetryMenu">重试</button>
+  </view>
+
+  <view wx:else class="menu-layout">
+    <scroll-view scroll-y class="category-sidebar">
+      <view
+        wx:for="{{categoryTabs}}"
+        wx:key="id"
+        class="category-tab {{item.active ? 'category-tab-active' : ''}}"
+        bindtap="onSelectCategory"
+        data-id="{{item.id}}"
+      >
+        {{item.name}}
+      </view>
+    </scroll-view>
+
+    <scroll-view scroll-y class="meal-panel">
+      <view class="meal-grid">
+        <view
+          wx:for="{{currentCategoryMeals}}"
+          wx:key="id"
+          class="meal-tile {{item.available ? '' : 'meal-locked'}} {{item.selected ? 'meal-selected' : ''}}"
+          bindtap="onSelectMeal"
+          data-id="{{item.id}}"
+        >
+          <image class="meal-tile-image" src="{{item.image}}" mode="aspectFill"></image>
+          <view class="meal-tile-name">{{item.name}}</view>
+          <view class="meal-tile-meta">{{item.requiredLevelName}}</view>
+          <view wx:if="{{item.available}}" class="meal-action">
+            {{item.selected ? '已选' : '可点'}}
+          </view>
+          <view wx:else class="lock-reason">{{item.lockReason}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view wx:if="{{toastText}}" class="notice">{{toastText}}</view>
+
+  <view class="bottom-bar">
+    <view class="selected-text">
+      <text wx:if="{{selectedMealIds.length}}">已选 {{selectedMealIds.length}} 份：{{selectedMealText}}</text>
+      <text wx:else>请选择可点餐食</text>
+    </view>
+    <button class="submit {{selectedMealIds.length && storeOpen && !orderSubmitting ? '' : 'submit-disabled'}}" bindtap="onSubmitOrder">
+      {{orderSubmitting ? '提交中' : '提交订单'}}
+    </button>
+  </view>
+
+  <view wx:if="{{showOrderModal}}" class="modal-mask" bindtap="onCloseOrderModal">
+    <view class="modal-card" catchtap="noop">
+      <view class="modal-icon">✓</view>
+      <view class="modal-title">{{orderSummary.title}}</view>
+      <view class="modal-line">{{orderSummary.primaryLine}}</view>
+      <view class="modal-meal">{{orderSummary.mealLine}}</view>
+      <view class="modal-location">{{latestOrder.locationText}}</view>
+      <view class="modal-helper">{{orderSummary.helperText}}</view>
+      <view class="modal-actions">
+        <button class="modal-button modal-secondary" bindtap="onContinueOrder">{{orderActions[0].label}}</button>
+        <button class="modal-button" bindtap="onViewLatestOrder">{{orderActions[1].label}}</button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,34 @@
+[
+  {
+    "_id": "basic",
+    "name": "基础会员",
+    "rank": 1,
+    "color": "#6f7f8f",
+    "note": "可享轻食与基础饮品",
+    "enabled": true
+  },
+  {
+    "_id": "silver",
+    "name": "银卡会员",
+    "rank": 2,
+    "color": "#8c96a3",
+    "note": "可享基础餐食与精品饮品",
+    "enabled": true
+  },
+  {
+    "_id": "gold",
+    "name": "金卡会员",
+    "rank": 3,
+    "color": "#b48732",
+    "note": "可享正餐、甜品和精选饮品",
+    "enabled": true
+  },
+  {
+    "_id": "diamond",
+    "name": "钻石会员",
+    "rank": 4,
+    "color": "#6b7fd7",
+    "note": "可享全量餐食与门店限定款",
+    "enabled": true
+  }
+]

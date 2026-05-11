@@ -1,0 +1,9 @@
+<view class="page">
+  <view class="card">
+    <view class="mark">!</view>
+    <view class="title">{{title}}</view>
+    <view class="message">{{message}}</view>
+    <button class="primary" bindtap="onBackToCustomer">返回顾客点单</button>
+    <button class="secondary" bindtap="onUseAdminMock">开发测试：切换店长身份</button>
+  </view>
+</view>

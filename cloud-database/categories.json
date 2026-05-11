@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "drinks",
+    "name": "饮品",
+    "sort": 1,
+    "enabled": true
+  },
+  {
+    "_id": "light",
+    "name": "轻食",
+    "sort": 2,
+    "enabled": true
+  },
+  {
+    "_id": "bakery",
+    "name": "烘焙",
+    "sort": 3,
+    "enabled": true
+  },
+  {
+    "_id": "meal",
+    "name": "正餐",
+    "sort": 4,
+    "enabled": true
+  },
+  {
+    "_id": "dessert",
+    "name": "甜品",
+    "sort": 5,
+    "enabled": true
+  },
+  {
+    "_id": "limited",
+    "name": "限定",
+    "sort": 6,
+    "enabled": true
+  }
+]

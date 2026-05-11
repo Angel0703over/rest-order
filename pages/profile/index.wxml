@@ -1,0 +1,22 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="notice">正在加载会员资料...</view>
+  <view wx:elif="{{feedback}}" class="notice">{{feedback}}</view>
+
+  <view class="member-card">
+    <view class="member-name">{{member.nickname}}</view>
+    <view class="member-phone">{{member.phone}}</view>
+    <view class="level-badge">{{level.name}}</view>
+    <view class="level-note">{{level.note}}</view>
+  </view>
+
+  <view class="stats">
+    <view>
+      <view class="num">{{stats.available}}</view>
+      <view class="label">当前可点</view>
+    </view>
+    <view>
+      <view class="num">{{stats.locked}}</view>
+      <view class="label">暂不可点</view>
+    </view>
+  </view>
+</view>

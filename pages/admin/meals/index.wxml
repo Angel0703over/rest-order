@@ -1,0 +1,93 @@
+<view class="admin-page">
+  <view class="admin-header">
+    <view>
+      <view class="eyebrow">店长配置</view>
+      <view class="title">餐食维护</view>
+    </view>
+    <view class="pill">{{meals.length}} 款</view>
+  </view>
+
+  <button class="switch-admin" bindtap="onOpenOrders">查看今日订单</button>
+
+  <view class="meal-list">
+    <view
+      wx:for="{{meals}}"
+      wx:key="id"
+      class="meal-row {{selectedMealId === item.id ? 'meal-row-active' : ''}}"
+      bindtap="onSelectMeal"
+      data-id="{{item.id}}"
+    >
+      <image class="meal-image" src="{{item.image}}" mode="aspectFill"></image>
+      <view class="meal-main">
+        <view class="meal-name">{{item.name}}</view>
+        <view class="meal-note">{{item.categoryId}} · {{item.desc}}</view>
+      </view>
+      <view class="meal-tags">
+        <view class="status-tag">{{item.requiredLevel}}</view>
+        <view class="status-tag {{item.availableToday ? 'stock-on' : 'status-tag-muted'}}">
+          {{item.availableToday ? '上架' : '下架'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="editor panel">
+    <view class="section-title">编辑餐食</view>
+
+    <view class="field">
+      <view class="label">餐食名称</view>
+      <input class="input" value="{{draft.name}}" bindinput="onNameInput" placeholder="例如：舒缓花茶" />
+    </view>
+
+    <view class="field">
+      <view class="label">分类</view>
+      <picker mode="selector" range="{{categories}}" range-key="name" bindchange="onCategoryInput">
+        <view class="picker-value">
+          <text wx:for="{{categories}}" wx:key="id" wx:if="{{item.id === draft.categoryId}}">{{item.name}}</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="field">
+      <view class="label">描述</view>
+      <textarea class="textarea" value="{{draft.desc}}" bindinput="onDescInput" placeholder="填写顾客能看到的餐食说明" />
+    </view>
+
+    <view class="field">
+      <view class="label">图片</view>
+      <view class="image-row">
+        <image class="preview-image" src="{{draft.image}}" mode="aspectFill"></image>
+        <input class="input image-input" value="{{draft.image}}" bindinput="onImageInput" placeholder="/assets/meal-tea.svg" />
+      </view>
+      <button class="upload-button" disabled="{{uploadingImage}}" bindtap="onChooseImage">
+        {{uploadingImage ? '上传中' : '上传图片'}}
+      </button>
+    </view>
+
+    <view class="field">
+      <view class="label">适用会员等级</view>
+      <picker mode="selector" range="{{memberLevels}}" range-key="name" bindchange="onLevelChange">
+        <view class="picker-value">
+          <text wx:for="{{memberLevels}}" wx:key="id" wx:if="{{item.id === draft.requiredLevel}}">{{item.name}}</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="field switch-field">
+      <view>
+        <view class="label">今日状态</view>
+        <view class="hint">下架后顾客端今日餐食里不会展示</view>
+      </view>
+      <switch
+        checked="{{draft.availableToday}}"
+        color="#2f2520"
+        data-id="{{draft.id}}"
+        disabled="{{loading}}"
+        bindchange="onAvailabilityChange"
+      />
+    </view>
+
+    <view wx:if="{{feedback}}" class="feedback">{{feedback}}</view>
+    <button class="save-button" bindtap="onSaveMeal">保存餐食</button>
+  </view>
+</view>

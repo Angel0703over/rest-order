@@ -1,0 +1,9 @@
+{
+  "name": "beauty-rest-order-miniprogram",
+  "version": "0.1.0",
+  "private": true,
+  "description": "美甲美睫店休息点单微信小程序前端原型",
+  "scripts": {
+    "test": "node tests/menu.test.js && node tests/admin.test.js && node tests/orders.test.js && node tests/routes.test.js && node tests/auth.test.js && node tests/cloud.test.js && node tests/session.test.js"
+  }
+}

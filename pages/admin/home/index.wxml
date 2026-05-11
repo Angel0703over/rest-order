@@ -1,0 +1,35 @@
+<view class="admin-page">
+  <view class="admin-header">
+    <view>
+      <view class="eyebrow">{{currentUser.role === 'owner' ? '店长入口' : '店员入口'}}</view>
+      <view class="title">{{currentUser.role === 'owner' ? '店长工作台' : '店员工作台'}}</view>
+    </view>
+    <view class="pill">{{currentUser.name}}</view>
+  </view>
+
+  <view class="workbench-card">
+    <view>
+      <view class="workbench-title">{{currentUser.role === 'owner' ? '门店配置与订单处理' : '今日订单处理'}}</view>
+      <view class="workbench-text">
+        {{currentUser.role === 'owner' ? '店长可维护店员、会员、餐食和订单；店员仅处理今日订单。' : '店员只显示订单相关功能，减少误操作。'}}
+      </view>
+    </view>
+    <view class="workbench-count">{{modules.length}}</view>
+  </view>
+
+  <view class="module-list">
+    <view
+      wx:for="{{modules}}"
+      wx:key="id"
+      class="module-card"
+      bindtap="onOpenModule"
+      data-url="{{item.url}}"
+    >
+      <view>
+        <view class="module-title">{{item.title}}</view>
+        <view class="module-desc">{{item.desc}}</view>
+      </view>
+      <view class="module-arrow">进入</view>
+    </view>
+  </view>
+</view>

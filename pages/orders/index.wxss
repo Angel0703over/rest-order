@@ -1,0 +1,84 @@
+.page {
+  background: #f7eee8;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 36rpx 28rpx 56rpx;
+}
+
+.header,
+.order-head,
+.line {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header {
+  margin-bottom: 24rpx;
+}
+
+.eyebrow {
+  color: #9a6b57;
+  font-size: 24rpx;
+  margin-bottom: 8rpx;
+}
+
+.title {
+  color: #2f2520;
+  font-size: 48rpx;
+  font-weight: 700;
+}
+
+.pill,
+.status {
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  padding: 10rpx 18rpx;
+}
+
+.pill {
+  border: 1rpx solid rgba(108, 77, 63, 0.22);
+  color: #7a4f3e;
+}
+
+.empty-card,
+.order-card {
+  background: #fffaf6;
+  border: 1rpx solid rgba(120, 82, 66, 0.1);
+  border-radius: 16rpx;
+  padding: 22rpx;
+}
+
+.empty-title,
+.order-id {
+  color: #2f2520;
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.empty-text,
+.line {
+  color: #8b7469;
+  font-size: 25rpx;
+}
+
+.empty-text {
+  line-height: 1.5;
+  margin-top: 10rpx;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.status {
+  background: #f0e4dc;
+  color: #7a4f3e;
+  font-weight: 700;
+}
+
+.line {
+  margin-top: 18rpx;
+}
