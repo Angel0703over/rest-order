@@ -37,6 +37,13 @@ const adminModules = [
     permission: 'menu.manage',
   },
   {
+    id: 'members',
+    title: '会员管理',
+    desc: '新增会员、绑定 openid、修改等级和停用会员',
+    url: '/pages/admin/members/index',
+    permission: 'member.manage',
+  },
+  {
     id: 'levels',
     title: '会员等级',
     desc: '维护会员等级名称、权益说明和标签颜色',

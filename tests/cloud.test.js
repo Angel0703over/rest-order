@@ -124,6 +124,27 @@ async function run() {
     ]);
   });
 
+  await test('cloud API can manage members through adminMembers', async () => {
+    const calls = [];
+    const { adminMembers } = require('../utils/cloudApi');
+    const wxLike = {
+      cloud: {
+        callFunction(options) {
+          calls.push(options);
+          return Promise.resolve({ result: { ok: true } });
+        },
+      },
+    };
+
+    await adminMembers({ action: 'list' }, wxLike);
+    await adminMembers({ action: 'update', memberId: 'u1001', member: { levelId: 'gold' } }, wxLike);
+
+    assert.deepEqual(calls, [
+      { name: 'adminMembers', data: { action: 'list' } },
+      { name: 'adminMembers', data: { action: 'update', memberId: 'u1001', member: { levelId: 'gold' } } },
+    ]);
+  });
+
   await test('云 API 会统一通过 wx.cloud.callFunction 调用云函数', async () => {
     const calls = [];
     const { callCloudFunction } = require('../utils/cloudApi');
@@ -696,6 +717,85 @@ async function run() {
       updatedAt: updated.level.updatedAt,
     }]);
   });
+
+  await test('adminMembers cloud function lists creates updates and disables members for owner', async () => {
+    const { main } = require('../cloudfunctions/adminMembers/index');
+    const members = [
+      { _id: 'u1001', openid: '', nickname: 'Lin', phone: '138****2106', levelId: 'basic', active: true },
+    ];
+    const levels = [
+      { _id: 'basic', name: 'Basic', rank: 1, enabled: true },
+      { _id: 'gold', name: 'Gold', rank: 3, enabled: true },
+    ];
+    const mutations = [];
+    const db = {
+      collection(name) {
+        if (name === 'users') {
+          return {
+            where(query) {
+              return { limit: () => ({ get: async () => ({ data: [{ openid: query.openid, role: 'owner' }] }) }) };
+            },
+          };
+        }
+        if (name === 'memberLevels') {
+          return {
+            where() {
+              return { orderBy() { return this; }, get: async () => ({ data: levels }) };
+            },
+          };
+        }
+        assert.equal(name, 'members');
+        return {
+          where() {
+            return {
+              orderBy() { return this; },
+              limit() { return this; },
+              get: async () => ({ data: members }),
+            };
+          },
+          add(payload) {
+            mutations.push(['add', payload.data]);
+            return Promise.resolve({ _id: 'u1002' });
+          },
+          doc(id) {
+            return {
+              update(payload) {
+                mutations.push(['update', id, payload.data]);
+                return Promise.resolve({ updated: 1 });
+              },
+            };
+          },
+        };
+      },
+    };
+
+    const list = await main({ action: 'list' }, { OPENID: 'owner-openid', db });
+    const created = await main({
+      action: 'create',
+      member: { nickname: 'Chen', phone: '136****8842', levelId: 'gold', openid: 'openid-chen' },
+    }, { OPENID: 'owner-openid', db, now: () => new Date('2026-05-11T16:00:00+08:00') });
+    const updated = await main({
+      action: 'update',
+      memberId: 'u1001',
+      member: { nickname: 'Lin 2', phone: '138****2106', levelId: 'gold', openid: 'openid-lin', active: true },
+    }, { OPENID: 'owner-openid', db, now: () => new Date('2026-05-11T16:30:00+08:00') });
+    const disabled = await main({ action: 'disable', memberId: 'u1001' }, {
+      OPENID: 'owner-openid',
+      db,
+      now: () => new Date('2026-05-11T17:00:00+08:00'),
+    });
+
+    assert.deepEqual(list.members.map((member) => member.id), ['u1001']);
+    assert.deepEqual(list.memberLevels.map((level) => level.id), ['basic', 'gold']);
+    assert.equal(created.member.id, 'u1002');
+    assert.equal(updated.member.levelId, 'gold');
+    assert.equal(disabled.ok, true);
+    assert.equal(mutations[0][0], 'add');
+    assert.equal(mutations[0][1].openid, 'openid-chen');
+    assert.deepEqual(mutations[1][2].nickname, 'Lin 2');
+    assert.equal(mutations[2][2].active, false);
+  });
+
   await test('cloud API can manage meals through adminMeals', async () => {
     const calls = [];
     const { adminMeals } = require('../utils/cloudApi');

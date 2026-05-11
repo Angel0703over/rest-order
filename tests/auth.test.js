@@ -64,7 +64,7 @@ test('店长可以访问员工管理和所有后台模块', () => {
   assert.equal(user.role, 'owner');
   assert.equal(hasAdminPermission(user, 'settings.manage'), true);
   assert.equal(hasAdminPermission(user, 'staff.manage'), true);
-  assert.deepEqual(modules.map((module) => module.id), ['settings', 'staff', 'categories', 'levels', 'meals', 'orders']);
+  assert.deepEqual(modules.map((module) => module.id), ['settings', 'staff', 'categories', 'members', 'levels', 'meals', 'orders']);
 });
 
 test('店员只能访问今日订单模块', () => {

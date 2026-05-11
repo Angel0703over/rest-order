@@ -9,6 +9,7 @@
     "pages/admin/settings/index",
     "pages/admin/staff/index",
     "pages/admin/categories/index",
+    "pages/admin/members/index",
     "pages/admin/levels/index",
     "pages/admin/meals/index",
     "pages/admin/orders/index"

@@ -239,3 +239,17 @@ const CLOUD_ENV_ID = '你的云环境 ID';
 - 顾客点单页会优先读取自己的云端会员资料，并按真实 `levelId` 展示可点餐食。
 - “我的”页会展示云端会员昵称、手机号、会员等级和权益。
 - 如果没有绑定 `members.openid`，页面会继续使用本地演示会员兜底，方便开发调试。
+
+## 店长会员管理云函数
+需要上传并部署：
+
+1. `cloudfunctions/adminMembers`
+
+部署后，店长工作台会出现“会员管理”入口。该页面会通过 `adminMembers`：
+
+- 读取 `members` 会员列表和 `memberLevels` 等级列表。
+- 新增会员。
+- 编辑会员姓名、手机号、绑定 openid、会员等级和启用状态。
+- 停用会员，停用后该会员不会再被 `login` 和 `getMyMemberProfile` 识别为有效顾客。
+
+绑定真实顾客时，把该顾客通过 `login` 云函数拿到的 `openid` 填到对应会员的“绑定 openid”输入框并保存即可。

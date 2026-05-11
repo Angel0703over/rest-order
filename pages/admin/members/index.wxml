@@ -1,0 +1,66 @@
+<view class="admin-page">
+  <view class="admin-header">
+    <view>
+      <view class="eyebrow">店长配置</view>
+      <view class="title">会员管理</view>
+    </view>
+    <view class="pill">{{members.length}} 人</view>
+  </view>
+
+  <view class="toolbar">
+    <button class="create-button" bindtap="onCreateMember" disabled="{{loading}}">新增会员</button>
+    <button class="switch-admin" bindtap="onOpenLevels">会员等级</button>
+  </view>
+
+  <view class="member-list">
+    <view
+      wx:for="{{members}}"
+      wx:key="id"
+      class="member-row {{selectedMemberId === item.id ? 'member-row-active' : ''}}"
+      bindtap="onSelectMember"
+      data-id="{{item.id}}"
+    >
+      <view>
+        <view class="member-name">{{item.nickname}}</view>
+        <view class="member-meta">{{item.phone}} · {{item.levelName}}</view>
+      </view>
+      <view class="status-tag {{item.active ? '' : 'status-tag-muted'}}">{{item.active ? '启用' : '停用'}}</view>
+    </view>
+  </view>
+
+  <view class="editor panel">
+    <view class="section-title">编辑会员</view>
+    <view class="field">
+      <view class="label">会员姓名</view>
+      <input class="input" value="{{draft.nickname}}" bindinput="onNicknameInput" placeholder="请输入会员姓名" />
+    </view>
+    <view class="field">
+      <view class="label">手机号</view>
+      <input class="input" value="{{draft.phone}}" bindinput="onPhoneInput" placeholder="请输入会员手机号" />
+    </view>
+    <view class="field">
+      <view class="label">绑定 openid</view>
+      <input class="input" value="{{draft.openid}}" bindinput="onOpenidInput" placeholder="粘贴顾客真实 openid，可先留空" />
+    </view>
+    <view class="field">
+      <view class="label">会员等级</view>
+      <picker mode="selector" range="{{memberLevels}}" range-key="name" bindchange="onLevelChange">
+        <view class="picker-value">{{draft.levelName || draft.levelId}}</view>
+      </picker>
+    </view>
+    <view class="switch-row">
+      <view>
+        <view class="label">会员状态</view>
+        <view class="hint">停用后该会员不能被识别为有效会员</view>
+      </view>
+      <switch checked="{{draft.active}}" bindchange="onActiveChange" />
+    </view>
+
+    <view wx:if="{{loading}}" class="feedback">正在同步会员...</view>
+    <view wx:elif="{{feedback}}" class="feedback">{{feedback}}</view>
+    <view class="actions">
+      <button class="delete-button" bindtap="onDisableMember" disabled="{{loading}}">停用</button>
+      <button class="save-button" bindtap="onSaveMember" disabled="{{loading}}">保存</button>
+    </view>
+  </view>
+</view>

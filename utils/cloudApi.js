@@ -75,6 +75,10 @@ function adminLevels(payload, wxLike = wx) {
   return callCloudFunction('adminLevels', payload, wxLike);
 }
 
+function adminMembers(payload, wxLike = wx) {
+  return callCloudFunction('adminMembers', payload, wxLike);
+}
+
 function adminMeals(payload, wxLike = wx) {
   return callCloudFunction('adminMeals', payload, wxLike);
 }
@@ -90,6 +94,7 @@ function adminSettings(payload, wxLike = wx) {
 module.exports = {
   adminCategories,
   adminLevels,
+  adminMembers,
   adminMeals,
   adminSettings,
   adminStaff,

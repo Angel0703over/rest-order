@@ -1,0 +1,52 @@
+@import "../common.wxss";
+
+.toolbar {
+  display: grid;
+  gap: 12rpx;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 16rpx;
+}
+
+.member-list {
+  background: #fffaf6;
+  border: 1rpx solid rgba(120, 82, 66, 0.1);
+  border-radius: 14rpx;
+  display: grid;
+  gap: 10rpx;
+  margin-bottom: 16rpx;
+  padding: 14rpx;
+}
+
+.member-row {
+  align-items: center;
+  border: 1rpx solid rgba(120, 82, 66, 0.08);
+  border-radius: 12rpx;
+  display: flex;
+  gap: 14rpx;
+  justify-content: space-between;
+  padding: 15rpx;
+}
+
+.member-row-active {
+  background: #f4e9e1;
+  border-color: #a86a50;
+}
+
+.member-name {
+  color: #2f2520;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.member-meta {
+  color: #8b7469;
+  font-size: 22rpx;
+  margin-top: 5rpx;
+}
+
+.switch-row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18rpx;
+}
