@@ -2,6 +2,7 @@ const { categories: fallbackCategories, meals: fallbackMeals, memberLevels: fall
 const { ensureAdminAccess } = require('../../../utils/auth');
 const { getAdminMealDraft, getMealImageLabel, validateMealDraft } = require('../../../utils/admin');
 const { adminMeals, uploadMealImage } = require('../../../utils/cloudApi');
+const { DEFAULT_MEAL_IMAGE } = require('../../../utils/menu');
 
 function firstMeal(meals) {
   return meals[0] || {
@@ -19,6 +20,7 @@ function buildDraftState(meal) {
   return {
     draft: { ...meal },
     imageLabel: getMealImageLabel(meal && meal.image),
+    previewImage: (meal && meal.image) || DEFAULT_MEAL_IMAGE,
   };
 }
 
@@ -118,6 +120,7 @@ Page({
             this.setData({
               draft: nextDraft,
               imageLabel: getMealImageLabel(uploadResult.fileID),
+              previewImage: uploadResult.fileID,
               feedback: '图片已上传，正在保存',
             });
             return adminMeals({
@@ -176,6 +179,28 @@ Page({
       .catch((error) => {
         this.setData({ feedback: error.message || '餐食保存失败' });
       });
+  },
+
+  onMealImageError(event) {
+    const mealId = event.currentTarget.dataset.id;
+    if (!mealId) {
+      return;
+    }
+    this.setData({
+      meals: this.data.meals.map((meal) => (
+        meal && meal.id === mealId ? { ...meal, image: DEFAULT_MEAL_IMAGE } : meal
+      )),
+    });
+  },
+
+  onPreviewImageError() {
+    if (this.data.previewImage === DEFAULT_MEAL_IMAGE) {
+      return;
+    }
+    this.setData({
+      previewImage: DEFAULT_MEAL_IMAGE,
+      imageLabel: getMealImageLabel(DEFAULT_MEAL_IMAGE),
+    });
   },
 
   onOpenOrders() {

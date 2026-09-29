@@ -79,7 +79,7 @@
 - [x] 餐食图片上传到云存储。
 - [x] `meals.image` 从本地路径迁移为云存储 `fileID`。
 - [x] 店长上传图片后自动回填餐食图片地址。
-- [ ] 为默认 SVG 或示例图片保留本地占位兜底。
+- [x] 为默认 SVG 或示例图片保留本地占位兜底（无图或云 fileID 失效时回退 `/assets/*.svg`）。
 
 ### 5.4 第一批云函数
 - [x] `login`：获取 openid，返回当前用户身份、权限和登录后入口页面。
@@ -134,3 +134,9 @@
 - [x] 待处理订单置顶高亮，并在页头显示「待处理 N 单」角标。
 - [x] 订单页 `onShow` 启动 15 秒自动轮询，`onHide`/`onUnload` 清理定时器；检测到新待处理订单时提示。
 - [x] 支持下拉刷新（`enablePullDownRefresh`）。
+
+## 2026-09-29 餐食图片占位兜底
+- [x] `utils/menu.js` 新增 `DEFAULT_MEAL_IMAGE` 与 `resolveMealImage`，菜单数据在 `normalizeMenuSource` 阶段为缺失图片的餐食补齐默认占位。
+- [x] 顾客端点单页餐食图片绑定 `binderror`，云 `fileID` 失效时自动回退默认 SVG，避免出现破图。
+- [x] 店长端餐食维护列表缩略图与编辑器预览图同样增加失败回退。
+- [x] 补充 `tests/menu.test.js` 占位兜底用例。

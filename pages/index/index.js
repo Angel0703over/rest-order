@@ -1,4 +1,5 @@
 const {
+  DEFAULT_MEAL_IMAGE,
   store,
   demoMembers,
   locations,
@@ -222,6 +223,20 @@ Page({
       categoryTabs: categoryView.categoryTabs,
       selectedCategoryId: categoryView.selectedCategoryId,
       currentCategoryMeals: categoryView.meals,
+    });
+  },
+
+  onMealImageError(event) {
+    const mealId = event.currentTarget.dataset.id;
+    if (!mealId) {
+      return;
+    }
+    const withFallback = (meal) => (
+      meal && meal.id === mealId ? { ...meal, image: DEFAULT_MEAL_IMAGE } : meal
+    );
+    this.setData({
+      meals: this.data.meals.map(withFallback),
+      currentCategoryMeals: this.data.currentCategoryMeals.map(withFallback),
     });
   },
 

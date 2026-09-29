@@ -61,7 +61,7 @@
           bindtap="onSelectMeal"
           data-id="{{item.id}}"
         >
-          <image class="meal-tile-image" src="{{item.image}}" mode="aspectFill"></image>
+          <image class="meal-tile-image" src="{{item.image}}" mode="aspectFill" data-id="{{item.id}}" binderror="onMealImageError"></image>
           <view class="meal-tile-name">{{item.name}}</view>
           <view class="meal-tile-meta">{{item.requiredLevelName}}</view>
           <view wx:if="{{item.available}}" class="meal-action">

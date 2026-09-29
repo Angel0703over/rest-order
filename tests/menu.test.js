@@ -1,11 +1,13 @@
 const assert = require('node:assert/strict');
 const storeConfig = require('../data/store');
 const {
+  DEFAULT_MEAL_IMAGE,
   memberLevels,
   demoMembers,
   meals,
   categories,
   locations,
+  resolveMealImage,
   canOrderMeal,
   getCategorizedMealGroups,
   getMealCategoryView,
@@ -292,4 +294,30 @@ test('store settings fallback keeps default rooms usable', () => {
   assert.equal(settings.storeName, defaultStoreSettings.storeName);
   assert.equal(settings.locations.length > 0, true);
   assert.equal(settings.locations[0].tables.length > 0, true);
+});
+
+test('餐食无图片时回退到本地默认 SVG 占位', () => {
+  assert.match(DEFAULT_MEAL_IMAGE, /^\/assets\/.*\.svg$/);
+  assert.equal(resolveMealImage(''), DEFAULT_MEAL_IMAGE);
+  assert.equal(resolveMealImage('   '), DEFAULT_MEAL_IMAGE);
+  assert.equal(resolveMealImage(undefined), DEFAULT_MEAL_IMAGE);
+  assert.equal(resolveMealImage('cloud://a/b.png'), 'cloud://a/b.png');
+});
+
+test('云端菜单缺少 image 字段时补齐默认占位图', () => {
+  const cloudMenu = {
+    memberLevels: [{ id: 'basic', name: 'Basic', rank: 1 }],
+    categories: [{ id: 'drinks', name: '饮品' }],
+    meals: [
+      { id: 'no-image', name: '无图餐食', categoryId: 'drinks', requiredLevel: 'basic', availableToday: true },
+      { id: 'has-image', name: '有图餐食', categoryId: 'drinks', requiredLevel: 'basic', availableToday: true, image: 'cloud://a/b.png' },
+    ],
+  };
+
+  const availability = getMealAvailability('basic', cloudMenu);
+  assert.equal(availability.find((meal) => meal.id === 'no-image').image, DEFAULT_MEAL_IMAGE);
+  assert.equal(availability.find((meal) => meal.id === 'has-image').image, 'cloud://a/b.png');
+
+  const view = getMealCategoryView('basic', 'drinks', [], cloudMenu);
+  assert.equal(view.meals.every((meal) => Boolean(meal.image)), true);
 });

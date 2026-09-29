@@ -17,7 +17,7 @@
       bindtap="onSelectMeal"
       data-id="{{item.id}}"
     >
-      <image class="meal-image" src="{{item.image}}" mode="aspectFill"></image>
+      <image class="meal-image" src="{{item.image}}" mode="aspectFill" data-id="{{item.id}}" binderror="onMealImageError"></image>
       <view class="meal-main">
         <view class="meal-name">{{item.name}}</view>
         <view class="meal-note">{{item.categoryId}} · {{item.desc}}</view>
@@ -56,7 +56,7 @@
     <view class="field">
       <view class="label">图片</view>
       <view class="image-row">
-        <image class="preview-image" src="{{draft.image}}" mode="aspectFill"></image>
+        <image class="preview-image" src="{{previewImage}}" mode="aspectFill" binderror="onPreviewImageError"></image>
         <view class="image-status">
           <view class="image-status-title">{{imageLabel}}</view>
           <view class="hint">上传后会自动保存到云端</view>

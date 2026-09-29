@@ -1,5 +1,12 @@
 const { store, categories, locations, memberLevels, demoMembers, meals } = require('../data/store');
 
+const DEFAULT_MEAL_IMAGE = '/assets/meal-bowl.svg';
+
+function resolveMealImage(image) {
+  const value = typeof image === 'string' ? image.trim() : '';
+  return value || DEFAULT_MEAL_IMAGE;
+}
+
 function normalizeItem(item) {
   if (!item) {
     return item;
@@ -15,7 +22,9 @@ function normalizeMenuSource(source = {}) {
   return {
     memberLevels: (currentSource.memberLevels || memberLevels).map(normalizeItem),
     categories: (currentSource.categories || categories).map(normalizeItem),
-    meals: (currentSource.meals || meals).map(normalizeItem),
+    meals: (currentSource.meals || meals)
+      .map(normalizeItem)
+      .map((meal) => (meal ? { ...meal, image: resolveMealImage(meal.image) } : meal)),
   };
 }
 
@@ -196,12 +205,14 @@ function getOrderFollowUpActions() {
 }
 
 module.exports = {
+  DEFAULT_MEAL_IMAGE,
   store,
   categories,
   locations,
   memberLevels,
   demoMembers,
   meals,
+  resolveMealImage,
   getCategory,
   getLocation,
   getLevel,
