@@ -7,6 +7,7 @@ const {
   getCustomerMember,
   getAdminAccess,
   getAdminModules,
+  getStaffWorkbenchModules,
   getLoginEntryPage,
   hasAdminPermission,
   isAdmin,
@@ -75,13 +76,24 @@ test('店员只能访问今日订单模块', () => {
   assert.equal(user.role, 'staff');
   assert.equal(isAdmin(user), true);
   assert.equal(hasAdminPermission(user, 'orders.update'), true);
+  assert.equal(hasAdminPermission(user, 'menu.manage'), true);
+  assert.equal(hasAdminPermission(user, 'meal.manage'), true);
   assert.equal(hasAdminPermission(user, 'staff.manage'), false);
   assert.deepEqual(getAdminAccess(user, 'staff.manage'), {
     allowed: false,
     redirectUrl: NO_ACCESS_PAGE,
   });
-  assert.deepEqual(getAdminModules(user).map((module) => module.id), ['orders']);
+  assert.deepEqual(getAdminModules(user).map((module) => module.id), ['categories', 'meals', 'orders']);
   assert.equal(getLoginEntryPage(user), STAFF_HOME_PAGE);
+});
+
+test('staff workbench shows only category, meal and order modules', () => {
+  const storage = createStorage();
+  setCurrentUserId('staff-owner', storage);
+  const user = getCurrentUser(storage);
+
+  assert.equal(user.role, 'owner');
+  assert.deepEqual(getStaffWorkbenchModules(user).map((module) => module.id), ['categories', 'meals', 'orders']);
 });
 
 test('普通顾客访问店长端会被导向无权限页', () => {

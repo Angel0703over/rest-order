@@ -20,7 +20,7 @@
       <view class="level-swatch" style="background: {{item.color}}"></view>
       <view class="level-main">
         <view class="level-name">{{item.name}}</view>
-        <view class="level-note">{{item.note}}</view>
+        <view class="level-note">{{item.minPoints}} 至 {{item.maxPoints}} 积分</view>
       </view>
       <view class="level-rank">Lv.{{item.rank}}</view>
     </view>
@@ -31,7 +31,15 @@
 
     <view class="field">
       <view class="label">等级名称</view>
-      <input class="input" value="{{draft.name}}" bindinput="onNameInput" placeholder="例如：基础会员" />
+      <input class="input" value="{{draft.name}}" bindinput="onNameInput" placeholder="例如：普通会员" />
+    </view>
+
+    <view class="field">
+      <view class="label">累计积分区间</view>
+      <view class="range-row">
+        <input class="input" type="number" value="{{draft.minPoints}}" bindinput="onMinPointsInput" placeholder="最低积分" />
+        <input class="input" type="number" value="{{draft.maxPoints}}" bindinput="onMaxPointsInput" placeholder="最高积分" />
+      </view>
     </view>
 
     <view class="field">

@@ -5,8 +5,13 @@ const {
   createCategory,
   deleteStaff,
   deleteCategory,
+  filterMembers,
+  searchMembersForLookup,
   getAdminLevelDraft,
   getAdminMealDraft,
+  getMealImageLabel,
+  matchMemberLevelByPoints,
+  normalizeExcelMemberRow,
   getStaffDraft,
   toggleMealAvailability,
   updateCategory,
@@ -131,9 +136,9 @@ test('保存会员等级只更新目标等级并保留排序', () => {
     color: '#8899aa',
   });
 
-  assert.deepEqual(nextLevels.map((level) => level.id), ['basic', 'silver', 'gold', 'diamond']);
+  assert.deepEqual(nextLevels.map((level) => level.id), ['normal', 'basic', 'silver', 'gold', 'diamond', 'special']);
   assert.equal(nextLevels.find((level) => level.id === 'silver').name, '白银会员');
-  assert.equal(nextLevels.find((level) => level.id === 'basic').name, '基础会员');
+  assert.equal(nextLevels.find((level) => level.id === 'basic').name, '普通会员');
   assert.throws(
     () => updateMemberLevel(memberLevels, 'silver', { name: '', note: '权益', color: '#ffffff' }),
     /请输入会员等级名称/
@@ -214,4 +219,81 @@ test('店长可以切换餐食每日上下架并保留列表顺序', () => {
 
   const restoredMeals = toggleMealAvailability(nextMeals, 'm101', true);
   assert.equal(restoredMeals.find((meal) => meal.id === 'm101').availableToday, true);
+});
+test('meal image status hides the raw storage path', () => {
+  assert.equal(getMealImageLabel('cloud://env/meal-images/tea.png'), '已上传云端图片');
+  assert.equal(getMealImageLabel('/assets/meal-tea.svg'), '默认图片');
+  assert.equal(getMealImageLabel(''), '未选择图片');
+});
+
+test('member level is matched from total points ranges', () => {
+  const levels = [
+    { id: 'normal', name: '普通', rank: 1, minPoints: 0, maxPoints: 1 },
+    { id: 'basic', name: '普通会员', rank: 2, minPoints: 2, maxPoints: 1000 },
+    { id: 'silver', name: '银卡会员', rank: 3, minPoints: 1001, maxPoints: 2000 },
+    { id: 'gold', name: '金卡会员', rank: 4, minPoints: 2001, maxPoints: 3000 },
+    { id: 'diamond', name: '钻石会员', rank: 5, minPoints: 3001, maxPoints: 4000 },
+    { id: 'special', name: '特级会员', rank: 6, minPoints: 4001, maxPoints: 6000 },
+  ];
+
+  assert.equal(matchMemberLevelByPoints(0, levels).id, 'normal');
+  assert.equal(matchMemberLevelByPoints(1000, levels).id, 'basic');
+  assert.equal(matchMemberLevelByPoints(2001, levels).id, 'gold');
+  assert.equal(matchMemberLevelByPoints(6001, levels).id, 'special');
+});
+
+test('excel member row is normalized to cloud member fields', () => {
+  const levels = [
+    { id: 'normal', name: '普通', rank: 1, minPoints: 0, maxPoints: 1 },
+    { id: 'basic', name: '普通会员', rank: 2, minPoints: 2, maxPoints: 1000 },
+  ];
+  const member = normalizeExcelMemberRow({
+    '会员卡号': '3341',
+    '会员姓名': '徐曼',
+    '会员手机号': '15162965666',
+    '级别名称': '普通会员',
+    '可用金额': '860.96',
+    '累计消费金额': '139.04',
+    '可用积分': '0',
+    '累计积分': '0',
+    '已使用积分': '0',
+    '添加时间': '2026-05-08 15:36:48',
+    '会员过期时间': '9999-12-31 00:00:00',
+    '属于店铺': '日式美甲沙龙',
+    '最后消费时间': '2026-05-08 15:37:24',
+  }, levels);
+
+  assert.equal(member._id, 'member-3341');
+  assert.equal(member.memberCardNo, '3341');
+  assert.equal(member.nickname, '徐曼');
+  assert.equal(member.phone, '15162965666');
+  assert.equal(member.levelId, 'normal');
+  assert.equal(member.sourceLevelName, '普通会员');
+  assert.equal(member.balance, 860.96);
+  assert.equal(member.totalSpent, 139.04);
+  assert.equal(member.storeName, '日式美甲沙龙');
+});
+test('admin members can be filtered by phone name or card number', () => {
+  const members = [
+    { id: 'u1', memberCardNo: '3341', nickname: 'Xu Man', phone: '15162965666' },
+    { id: 'u2', memberCardNo: '3342', nickname: 'Ellise', phone: '15162963961' },
+    { id: 'u3', memberCardNo: '9910', nickname: 'Qin Qing', phone: '13371866862' },
+  ];
+
+  assert.deepEqual(filterMembers(members, '').map((member) => member.id), ['u1', 'u2', 'u3']);
+  assert.deepEqual(filterMembers(members, '6566').map((member) => member.id), ['u1']);
+  assert.deepEqual(filterMembers(members, 'ell').map((member) => member.id), ['u2']);
+  assert.deepEqual(filterMembers(members, '9910').map((member) => member.id), ['u3']);
+  assert.deepEqual(filterMembers(members, 'no-match').map((member) => member.id), []);
+});
+
+test('admin member lookup stays empty until a search keyword is entered', () => {
+  const members = [
+    { id: 'u1', memberCardNo: '3341', nickname: 'Xu Man', phone: '15162965666' },
+    { id: 'u2', memberCardNo: '3342', nickname: 'Ellise', phone: '15162963961' },
+  ];
+
+  assert.deepEqual(searchMembersForLookup(members, ''), []);
+  assert.deepEqual(searchMembersForLookup(members, '   '), []);
+  assert.deepEqual(searchMembersForLookup(members, '3342').map((member) => member.id), ['u2']);
 });

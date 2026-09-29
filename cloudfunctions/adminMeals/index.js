@@ -19,11 +19,13 @@ async function getOpenid(context) {
   return '';
 }
 
-async function assertOwner(db, openid) {
+async function assertMealManager(db, openid) {
   if (!db || !openid) throw new Error('无法识别微信用户');
   const result = await db.collection('users').where({ openid }).limit(1).get();
   const user = result && result.data && result.data[0];
-  if (!user || user.role !== 'owner') throw new Error('只有店长可以维护餐食');
+  if (!user || !['owner', 'staff'].includes(user.role)) {
+    throw new Error('只有店长或店员可以维护餐食');
+  }
   return user;
 }
 
@@ -59,7 +61,7 @@ async function listPayload(db) {
 async function main(event = {}, context = {}) {
   const db = getDatabase(context);
   const openid = await getOpenid(context);
-  await assertOwner(db, openid);
+  await assertMealManager(db, openid);
 
   const action = event.action || 'list';
   if (action === 'list') {

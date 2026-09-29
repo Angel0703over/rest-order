@@ -1,6 +1,6 @@
 const { loginWithCloud } = require('./cloudApi');
 const { DEV_FORCE_CUSTOMER_ENTRY } = require('./cloudConfig');
-const { CUSTOMER_ENTRY_PAGE } = require('./routes');
+const { BIND_PHONE_PAGE, CUSTOMER_ENTRY_PAGE } = require('./routes');
 
 const TAB_PAGES = [
   '/pages/index/index',
@@ -28,7 +28,12 @@ function redirectToEntryPage(entryPage, currentPage = CUSTOMER_ENTRY_PAGE, wxLik
   const forceCustomerEntry = Object.prototype.hasOwnProperty.call(options, 'forceCustomerEntry')
     ? options.forceCustomerEntry
     : DEV_FORCE_CUSTOMER_ENTRY;
-  if (forceCustomerEntry && currentPage === CUSTOMER_ENTRY_PAGE && entryPage !== CUSTOMER_ENTRY_PAGE) {
+  if (
+    forceCustomerEntry
+    && currentPage === CUSTOMER_ENTRY_PAGE
+    && entryPage !== CUSTOMER_ENTRY_PAGE
+    && entryPage !== BIND_PHONE_PAGE
+  ) {
     return false;
   }
   if (!entryPage || entryPage === currentPage) {

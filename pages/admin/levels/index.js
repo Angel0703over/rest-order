@@ -4,7 +4,7 @@ const { getAdminLevelDraft, validateMemberLevelDraft } = require('../../../utils
 const { adminLevels } = require('../../../utils/cloudApi');
 
 function firstLevel(levels) {
-  return levels[0] || { id: '', name: '', note: '', color: '#6f7f8f', rank: 1, enabled: true };
+  return levels[0] || { id: '', name: '', note: '', color: '#6f7f8f', rank: 1, minPoints: 0, maxPoints: 1, enabled: true };
 }
 
 Page({
@@ -66,6 +66,14 @@ Page({
 
   onColorInput(event) {
     this.setData({ 'draft.color': event.detail.value });
+  },
+
+  onMinPointsInput(event) {
+    this.setData({ 'draft.minPoints': Number(event.detail.value) });
+  },
+
+  onMaxPointsInput(event) {
+    this.setData({ 'draft.maxPoints': Number(event.detail.value) });
   },
 
   onSaveLevel() {

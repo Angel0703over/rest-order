@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/bind-phone/index",
     "pages/orders/index",
     "pages/profile/index",
     "pages/no-access/index",

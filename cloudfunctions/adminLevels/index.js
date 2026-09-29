@@ -41,6 +41,11 @@ function nowText(context) {
   return now.toLocaleString('zh-CN', { hour12: false });
 }
 
+function toNumber(value, fallback = 0) {
+  const number = Number(String(value === undefined || value === null ? '' : value).replace(/,/g, '').trim());
+  return Number.isFinite(number) ? number : fallback;
+}
+
 function assertValidLevel(level = {}) {
   if (!level.name || !level.name.trim()) {
     throw new Error('请输入会员等级名称');
@@ -50,6 +55,9 @@ function assertValidLevel(level = {}) {
   }
   if (!/^#[0-9a-fA-F]{6}$/.test(level.color || '')) {
     throw new Error('请输入正确的颜色值');
+  }
+  if (toNumber(level.minPoints, -1) < 0 || toNumber(level.maxPoints, -1) < toNumber(level.minPoints, 0)) {
+    throw new Error('请输入正确的积分区间');
   }
 }
 
@@ -75,6 +83,8 @@ async function main(event = {}, context = {}) {
       name: event.level.name.trim(),
       note: event.level.note.trim(),
       color: event.level.color.trim(),
+      minPoints: toNumber(event.level.minPoints),
+      maxPoints: toNumber(event.level.maxPoints),
       updatedAt: nowText(context),
     };
     await db.collection('memberLevels').doc(event.levelId).update({ data });

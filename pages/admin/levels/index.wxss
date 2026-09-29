@@ -67,6 +67,12 @@
   gap: 12rpx;
 }
 
+.range-row {
+  display: grid;
+  gap: 12rpx;
+  grid-template-columns: 1fr 1fr;
+}
+
 .color-input {
   flex: 1;
 }

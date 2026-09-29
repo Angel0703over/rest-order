@@ -39,6 +39,10 @@ function loginWithCloud(wxLike = wx) {
   return callCloudFunction('login', {}, wxLike);
 }
 
+function bindMemberPhone(code, wxLike = wx) {
+  return callCloudFunction('bindMemberPhone', { code }, wxLike);
+}
+
 function getCustomerMenu(memberLevelId, wxLike = wx) {
   return callCloudFunction('getCustomerMenu', { memberLevelId }, wxLike);
 }
@@ -98,6 +102,7 @@ module.exports = {
   adminMeals,
   adminSettings,
   adminStaff,
+  bindMemberPhone,
   buildMealImageCloudPath,
   callCloudFunction,
   createOrder,

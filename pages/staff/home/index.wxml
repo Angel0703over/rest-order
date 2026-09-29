@@ -1,21 +1,39 @@
 <view class="staff-page">
   <view class="staff-header">
     <view>
-      <view class="eyebrow">员工端</view>
-      <view class="title">今日订单</view>
+      <view class="eyebrow">员工入口</view>
+      <view class="title">员工工作台</view>
     </view>
     <view class="pill">{{currentUser.name}}</view>
   </view>
 
   <view class="summary-card">
     <view>
-      <view class="summary-title">待处理订单</view>
-      <view class="summary-text">查看顾客位置、餐食和当前状态</view>
+      <view class="summary-title">分类、餐食与订单</view>
+      <view class="summary-text">店员可维护分类、餐食和处理今日订单。</view>
     </view>
-    <view class="summary-count">{{orders.length}}</view>
+    <view class="summary-count">{{modules.length}}</view>
+  </view>
+
+  <view class="module-list">
+    <view
+      wx:for="{{modules}}"
+      wx:key="id"
+      class="module-card {{item.id === 'orders' ? 'module-card-muted' : ''}}"
+      bindtap="onOpenModule"
+      data-url="{{item.url}}"
+    >
+      <view>
+        <view class="module-title">{{item.title}}</view>
+        <view class="module-desc">{{item.desc}}</view>
+      </view>
+      <view class="module-arrow">{{item.id === 'orders' ? '下方处理' : '进入'}}</view>
+    </view>
   </view>
 
   <view wx:if="{{feedback}}" class="feedback">{{feedback}}</view>
+
+  <view class="orders-title">今日订单</view>
 
   <view wx:if="{{orders.length === 0}}" class="empty-card">
     <view class="empty-title">暂无订单</view>

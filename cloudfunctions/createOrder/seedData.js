@@ -1,8 +1,10 @@
 const memberLevels = [
-  { _id: 'basic', name: '基础会员', rank: 1, enabled: true },
-  { _id: 'silver', name: '银卡会员', rank: 2, enabled: true },
-  { _id: 'gold', name: '金卡会员', rank: 3, enabled: true },
-  { _id: 'diamond', name: '钻石会员', rank: 4, enabled: true },
+  { _id: 'normal', name: '普通', rank: 1, minPoints: 0, maxPoints: 1, enabled: true },
+  { _id: 'basic', name: '普通会员', rank: 2, minPoints: 2, maxPoints: 1000, enabled: true },
+  { _id: 'silver', name: '银卡会员', rank: 3, minPoints: 1001, maxPoints: 2000, enabled: true },
+  { _id: 'gold', name: '金卡会员', rank: 4, minPoints: 2001, maxPoints: 3000, enabled: true },
+  { _id: 'diamond', name: '钻石会员', rank: 5, minPoints: 3001, maxPoints: 4000, enabled: true },
+  { _id: 'special', name: '特级会员', rank: 6, minPoints: 4001, maxPoints: 6000, enabled: true },
 ];
 
 const meals = [

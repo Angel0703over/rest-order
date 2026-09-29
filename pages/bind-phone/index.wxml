@@ -1,0 +1,31 @@
+<view class="bind-page">
+  <view class="topbar">会员休息点单</view>
+
+  <view class="hero">
+    <view class="eyebrow">扫码进入</view>
+    <view class="title">绑定会员手机号</view>
+    <view class="subtitle">使用微信手机号匹配门店会员资料，绑定成功后即可按会员等级点单。</view>
+  </view>
+
+  <view class="panel">
+    <view class="section-title">会员验证</view>
+    <view class="info-row">
+      <view class="info-label">匹配方式</view>
+      <view class="info-value">微信手机号授权</view>
+    </view>
+    <view class="info-row">
+      <view class="info-label">会员来源</view>
+      <view class="info-value">门店会员表手机号</view>
+    </view>
+    <button
+      class="bind-button"
+      open-type="getPhoneNumber"
+      bindgetphonenumber="onGetPhoneNumber"
+      loading="{{binding}}"
+      disabled="{{binding}}"
+    >
+      {{binding ? '正在绑定...' : '授权手机号并绑定'}}
+    </button>
+    <view wx:if="{{feedback}}" class="feedback">{{feedback}}</view>
+  </view>
+</view>

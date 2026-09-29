@@ -72,6 +72,57 @@
   width: 72rpx;
 }
 
+.module-list {
+  display: grid;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.module-card {
+  align-items: center;
+  background: #fffaf6;
+  border: 1rpx solid rgba(120, 82, 66, 0.1);
+  border-radius: 14rpx;
+  display: flex;
+  justify-content: space-between;
+  padding: 18rpx;
+}
+
+.module-card-muted {
+  background: #f4e9e1;
+}
+
+.module-title {
+  color: #2f2520;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.module-desc {
+  color: #8b7469;
+  font-size: 22rpx;
+  line-height: 1.4;
+  margin-top: 6rpx;
+}
+
+.module-arrow {
+  background: #f0e4dc;
+  border-radius: 999rpx;
+  color: #7a4f3e;
+  flex: 0 0 auto;
+  font-size: 22rpx;
+  font-weight: 700;
+  margin-left: 14rpx;
+  padding: 10rpx 14rpx;
+}
+
+.orders-title {
+  color: #2f2520;
+  font-size: 30rpx;
+  font-weight: 700;
+  margin: 20rpx 0 12rpx;
+}
+
 .feedback,
 .empty-card,
 .order-card {

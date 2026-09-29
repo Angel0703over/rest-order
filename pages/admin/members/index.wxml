@@ -12,7 +12,20 @@
     <button class="switch-admin" bindtap="onOpenLevels">会员等级</button>
   </view>
 
+  <view class="search-panel">
+    <input
+      class="search-input"
+      value="{{memberSearchKeyword}}"
+      bindinput="onMemberSearchInput"
+      placeholder="按手机号 / 姓名 / 卡号查询"
+      confirm-type="search"
+    />
+    <button wx:if="{{memberSearchKeyword}}" class="clear-search" bindtap="onClearMemberSearch">清空</button>
+  </view>
+
   <view class="member-list">
+    <view wx:if="{{!memberSearchKeyword}}" class="empty-result">输入手机号、姓名或卡号后查看会员</view>
+    <view wx:elif="{{!members.length}}" class="empty-result">没有找到匹配会员</view>
     <view
       wx:for="{{members}}"
       wx:key="id"
@@ -20,34 +33,139 @@
       bindtap="onSelectMember"
       data-id="{{item.id}}"
     >
-      <view>
+      <view class="member-main">
         <view class="member-name">{{item.nickname}}</view>
-        <view class="member-meta">{{item.phone}} · {{item.levelName}}</view>
+        <view class="member-meta">卡号 {{item.memberCardNo || '-'}} · {{item.phone}}</view>
       </view>
-      <view class="status-tag {{item.active ? '' : 'status-tag-muted'}}">{{item.active ? '启用' : '停用'}}</view>
+      <view class="member-side">
+        <view class="status-tag {{item.active ? '' : 'status-tag-muted'}}">{{item.active ? item.levelName : '停用'}}</view>
+        <view class="points-text">{{item.totalPoints || 0}} 分</view>
+      </view>
     </view>
   </view>
 
   <view class="editor panel">
     <view class="section-title">编辑会员</view>
+
+    <view class="section-subtitle">基础资料</view>
+    <view class="field-grid">
+      <view class="field">
+        <view class="label">会员卡号</view>
+        <input class="input" value="{{draft.memberCardNo}}" bindinput="onMemberCardInput" placeholder="会员卡号" />
+      </view>
+      <view class="field">
+        <view class="label">会员姓名</view>
+        <input class="input" value="{{draft.nickname}}" bindinput="onNicknameInput" placeholder="会员姓名" />
+      </view>
+      <view class="field">
+        <view class="label">手机号</view>
+        <input class="input" value="{{draft.phone}}" bindinput="onPhoneInput" placeholder="会员手机号" />
+      </view>
+      <view class="field">
+        <view class="label">会员生日</view>
+        <input class="input" value="{{draft.birthday}}" bindinput="onBirthdayInput" placeholder="YYYY-MM-DD" />
+      </view>
+      <view class="field">
+        <view class="label">会员称谓</view>
+        <input class="input" value="{{draft.title}}" bindinput="onTitleInput" placeholder="称谓" />
+      </view>
+      <view class="field">
+        <view class="label">标签</view>
+        <input class="input" value="{{draft.tag}}" bindinput="onTagInput" placeholder="标签" />
+      </view>
+      <view class="field">
+        <view class="label">分组名称</view>
+        <input class="input" value="{{draft.groupName}}" bindinput="onGroupInput" placeholder="分组" />
+      </view>
+      <view class="field">
+        <view class="label">属于店铺</view>
+        <input class="input" value="{{draft.storeName}}" bindinput="onStoreInput" placeholder="门店名称" />
+      </view>
+    </view>
+
+    <view class="section-subtitle">等级与积分</view>
+    <view class="level-summary">
+      <view>
+        <view class="label">当前等级</view>
+        <view class="level-name">{{draft.levelName || draft.levelId}}</view>
+      </view>
+      <view class="hint">按累计积分自动匹配</view>
+    </view>
+    <view class="field-grid">
+      <view class="field">
+        <view class="label">累计积分</view>
+        <input class="input" type="number" value="{{draft.totalPoints}}" bindinput="onTotalPointsInput" placeholder="累计积分" />
+      </view>
+      <view class="field">
+        <view class="label">可用积分</view>
+        <input class="input" type="number" value="{{draft.availablePoints}}" bindinput="onAvailablePointsInput" placeholder="可用积分" />
+      </view>
+      <view class="field">
+        <view class="label">已使用积分</view>
+        <input class="input" type="number" value="{{draft.usedPoints}}" bindinput="onUsedPointsInput" placeholder="已使用积分" />
+      </view>
+      <view class="field">
+        <view class="label">原级别名称</view>
+        <input class="input" value="{{draft.sourceLevelName}}" disabled placeholder="Excel 原始等级" />
+      </view>
+    </view>
+
+    <view class="section-subtitle">消费与联系</view>
+    <view class="field-grid">
+      <view class="field">
+        <view class="label">可用金额</view>
+        <input class="input" type="digit" value="{{draft.balance}}" bindinput="onBalanceInput" placeholder="0.00" />
+      </view>
+      <view class="field">
+        <view class="label">累计消费金额</view>
+        <input class="input" type="digit" value="{{draft.totalSpent}}" bindinput="onTotalSpentInput" placeholder="0.00" />
+      </view>
+      <view class="field">
+        <view class="label">微信号</view>
+        <input class="input" value="{{draft.wechat}}" bindinput="onWechatInput" placeholder="微信号" />
+      </view>
+      <view class="field">
+        <view class="label">QQ</view>
+        <input class="input" value="{{draft.qq}}" bindinput="onQqInput" placeholder="QQ" />
+      </view>
+      <view class="field">
+        <view class="label">邮箱</view>
+        <input class="input" value="{{draft.email}}" bindinput="onEmailInput" placeholder="邮箱" />
+      </view>
+      <view class="field">
+        <view class="label">绑定 openid</view>
+        <input class="input" value="{{draft.openid}}" bindinput="onOpenidInput" placeholder="顾客真实 openid" />
+      </view>
+    </view>
+
+    <view class="section-subtitle">备注</view>
     <view class="field">
-      <view class="label">会员姓名</view>
-      <input class="input" value="{{draft.nickname}}" bindinput="onNicknameInput" placeholder="请输入会员姓名" />
+      <view class="label">用户地址</view>
+      <input class="input" value="{{draft.address}}" bindinput="onAddressInput" placeholder="用户地址" />
     </view>
     <view class="field">
-      <view class="label">手机号</view>
-      <input class="input" value="{{draft.phone}}" bindinput="onPhoneInput" placeholder="请输入会员手机号" />
+      <view class="label">用户喜好</view>
+      <input class="input" value="{{draft.preference}}" bindinput="onPreferenceInput" placeholder="用户喜好" />
     </view>
     <view class="field">
-      <view class="label">绑定 openid</view>
-      <input class="input" value="{{draft.openid}}" bindinput="onOpenidInput" placeholder="粘贴顾客真实 openid，可先留空" />
+      <view class="label">计次项目</view>
+      <input class="input" value="{{draft.packageItems}}" bindinput="onPackageInput" placeholder="计次项目" />
+    </view>
+    <view class="field-grid">
+      <view class="field">
+        <view class="label">会员过期时间</view>
+        <input class="input" value="{{draft.expiresAt}}" bindinput="onExpiresInput" placeholder="过期时间" />
+      </view>
+      <view class="field">
+        <view class="label">最后消费时间</view>
+        <input class="input" value="{{draft.lastConsumeAt}}" bindinput="onLastConsumeInput" placeholder="最后消费时间" />
+      </view>
     </view>
     <view class="field">
-      <view class="label">会员等级</view>
-      <picker mode="selector" range="{{memberLevels}}" range-key="name" bindchange="onLevelChange">
-        <view class="picker-value">{{draft.levelName || draft.levelId}}</view>
-      </picker>
+      <view class="label">备注信息</view>
+      <textarea class="textarea" value="{{draft.remark}}" bindinput="onRemarkInput" placeholder="备注信息" />
     </view>
+
     <view class="switch-row">
       <view>
         <view class="label">会员状态</view>

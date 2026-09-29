@@ -35,7 +35,7 @@ function test(name, fn) {
 }
 
 test('会员等级按由低到高排序', () => {
-  assert.deepEqual(memberLevels.map((level) => level.id), ['basic', 'silver', 'gold', 'diamond']);
+  assert.deepEqual(memberLevels.map((level) => level.id), ['normal', 'basic', 'silver', 'gold', 'diamond', 'special']);
 });
 
 test('门店配置集中导出顾客端需要的数据', () => {
@@ -61,10 +61,12 @@ test('会员等级展示只点亮当前等级', () => {
   assert.deepEqual(
     display.map((level) => ({ id: level.id, active: level.active })),
     [
+      { id: 'normal', active: false },
       { id: 'basic', active: false },
       { id: 'silver', active: false },
       { id: 'gold', active: true },
       { id: 'diamond', active: false },
+      { id: 'special', active: false },
     ]
   );
 });

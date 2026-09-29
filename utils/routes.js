@@ -1,4 +1,5 @@
 const CUSTOMER_ENTRY_PAGE = '/pages/index/index';
+const BIND_PHONE_PAGE = '/pages/bind-phone/index';
 const ADMIN_ENTRY_PAGE = '/pages/admin/home/index';
 const STAFF_ENTRY_PAGE = '/pages/staff/home/index';
 
@@ -15,6 +16,7 @@ function getEntryPageForRole(role) {
 }
 
 module.exports = {
+  BIND_PHONE_PAGE,
   CUSTOMER_ENTRY_PAGE,
   ADMIN_ENTRY_PAGE,
   STAFF_ENTRY_PAGE,

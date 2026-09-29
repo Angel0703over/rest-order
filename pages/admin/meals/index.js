@@ -1,6 +1,6 @@
 const { categories: fallbackCategories, meals: fallbackMeals, memberLevels: fallbackLevels } = require('../../../data/store');
 const { ensureAdminAccess } = require('../../../utils/auth');
-const { getAdminMealDraft, validateMealDraft } = require('../../../utils/admin');
+const { getAdminMealDraft, getMealImageLabel, validateMealDraft } = require('../../../utils/admin');
 const { adminMeals, uploadMealImage } = require('../../../utils/cloudApi');
 
 function firstMeal(meals) {
@@ -15,13 +15,20 @@ function firstMeal(meals) {
   };
 }
 
+function buildDraftState(meal) {
+  return {
+    draft: { ...meal },
+    imageLabel: getMealImageLabel(meal && meal.image),
+  };
+}
+
 Page({
   data: {
     meals: fallbackMeals,
     categories: fallbackCategories,
     memberLevels: fallbackLevels,
     selectedMealId: fallbackMeals[0].id,
-    draft: getAdminMealDraft(fallbackMeals, fallbackMeals[0].id),
+    ...buildDraftState(getAdminMealDraft(fallbackMeals, fallbackMeals[0].id)),
     feedback: '',
     loading: false,
     uploadingImage: false,
@@ -50,7 +57,7 @@ Page({
           categories: result.categories || [],
           memberLevels: result.memberLevels || [],
           selectedMealId: selected.id,
-          draft: { ...selected },
+          ...buildDraftState(selected),
           loading: false,
         });
       })
@@ -62,9 +69,10 @@ Page({
 
   onSelectMeal(event) {
     const selectedMealId = event.currentTarget.dataset.id;
+    const draft = getAdminMealDraft(this.data.meals, selectedMealId);
     this.setData({
       selectedMealId,
-      draft: getAdminMealDraft(this.data.meals, selectedMealId),
+      ...buildDraftState(draft || firstMeal([])),
       feedback: '',
     });
   },
@@ -79,10 +87,6 @@ Page({
 
   onDescInput(event) {
     this.setData({ 'draft.desc': event.detail.value });
-  },
-
-  onImageInput(event) {
-    this.setData({ 'draft.image': event.detail.value });
   },
 
   onLevelChange(event) {
@@ -101,24 +105,41 @@ Page({
       sourceType: ['album', 'camera'],
       success: (res) => {
         const file = res.tempFiles && res.tempFiles[0];
-        if (file && file.tempFilePath) {
-          this.setData({ uploadingImage: true, feedback: '图片上传中' });
-          uploadMealImage(file.tempFilePath)
-            .then((uploadResult) => {
-              this.setData({
-                'draft.image': uploadResult.fileID,
-                uploadingImage: false,
-                feedback: '图片已上传，保存餐食后生效',
-              });
-            })
-            .catch((error) => {
-              console.error('cloud upload meal image failed', error);
-              this.setData({
-                uploadingImage: false,
-                feedback: error.message || '图片上传失败',
-              });
-            });
+        if (!file || !file.tempFilePath) {
+          return;
         }
+        this.setData({ uploadingImage: true, feedback: '图片上传中' });
+        uploadMealImage(file.tempFilePath)
+          .then((uploadResult) => {
+            const nextDraft = {
+              ...this.data.draft,
+              image: uploadResult.fileID,
+            };
+            this.setData({
+              draft: nextDraft,
+              imageLabel: getMealImageLabel(uploadResult.fileID),
+              feedback: '图片已上传，正在保存',
+            });
+            return adminMeals({
+              action: 'update',
+              mealId: this.data.selectedMealId,
+              meal: nextDraft,
+            });
+          })
+          .then(() => {
+            this.setData({
+              uploadingImage: false,
+              feedback: '图片已上传并保存',
+            });
+            this.refreshMeals(this.data.selectedMealId);
+          })
+          .catch((error) => {
+            console.error('cloud upload meal image failed', error);
+            this.setData({
+              uploadingImage: false,
+              feedback: error.message || '图片上传失败',
+            });
+          });
       },
     });
   },

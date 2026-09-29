@@ -68,8 +68,10 @@ const adminModules = [
 
 const rolePermissions = {
   owner: ['settings.manage', 'staff.manage', 'menu.manage', 'member.manage', 'meal.manage', 'orders.update'],
-  staff: ['orders.update'],
+  staff: ['menu.manage', 'meal.manage', 'orders.update'],
 };
+
+const staffWorkbenchModuleIds = ['categories', 'meals', 'orders'];
 
 function getCurrentUser(storage = wx) {
   const userId = storage.getStorageSync(CURRENT_USER_STORAGE_KEY) || defaultUserId;
@@ -100,6 +102,12 @@ function hasAdminPermission(user, permission) {
 
 function getAdminModules(user) {
   return adminModules.filter((module) => hasAdminPermission(user, module.permission));
+}
+
+function getStaffWorkbenchModules(user) {
+  return adminModules.filter((module) => (
+    staffWorkbenchModuleIds.includes(module.id) && hasAdminPermission(user, module.permission)
+  ));
 }
 
 function getAdminAccess(user, permission) {
@@ -139,6 +147,7 @@ module.exports = {
   NO_ACCESS_PAGE,
   STAFF_HOME_PAGE,
   getAdminModules,
+  getStaffWorkbenchModules,
   getAdminAccess,
   getCurrentUser,
   getCustomerMember,

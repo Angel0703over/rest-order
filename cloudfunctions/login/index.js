@@ -33,6 +33,7 @@ const mockUsers = [
 
 const entryPages = {
   customer: '/pages/index/index',
+  bindPhone: '/pages/bind-phone/index',
   owner: '/pages/admin/home/index',
   staff: '/pages/staff/home/index',
   disabled: '/pages/no-access/index',
@@ -40,7 +41,7 @@ const entryPages = {
 
 const rolePermissions = {
   owner: ['settings.manage', 'staff.manage', 'menu.manage', 'member.manage', 'meal.manage', 'orders.update'],
-  staff: ['orders.update'],
+  staff: ['menu.manage', 'meal.manage', 'orders.update'],
   customer: [],
 };
 
@@ -171,6 +172,7 @@ async function main(event = {}, context = {}) {
   const user = isDisabledStaff ? null : (cloudUser || sanitizeMemberAsUser(cloudMember) || mockUser);
   const role = user ? user.role : 'customer';
   const source = isDisabledStaff ? 'disabled' : cloudUser ? 'database' : cloudMember ? 'member' : mockUser ? 'mock' : 'default';
+  const bindingRequired = !isDisabledStaff && role === 'customer' && (!user || !user.memberId);
 
   const response = {
     openid,
@@ -182,8 +184,9 @@ async function main(event = {}, context = {}) {
       staffId: '',
       name: '',
     },
-    entryPage: isDisabledStaff ? entryPages.disabled : getEntryPageForRole(role),
+    entryPage: isDisabledStaff ? entryPages.disabled : bindingRequired ? entryPages.bindPhone : getEntryPageForRole(role),
     permissions: getPermissions(role),
+    bindingRequired,
   };
 
   if (isDisabledStaff) {

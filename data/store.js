@@ -7,10 +7,12 @@ const store = {
 };
 
 const memberLevels = [
-  { id: 'basic', name: '基础会员', rank: 1, color: '#6f7f8f', note: '可享轻食与基础饮品' },
-  { id: 'silver', name: '银卡会员', rank: 2, color: '#8c96a3', note: '可享基础餐食与精品饮品' },
-  { id: 'gold', name: '金卡会员', rank: 3, color: '#b48732', note: '可享正餐、甜品和精选饮品' },
-  { id: 'diamond', name: '钻石会员', rank: 4, color: '#6b7fd7', note: '可享全量餐食与门店限定款' },
+  { id: 'normal', name: '普通', rank: 1, minPoints: 0, maxPoints: 1, color: '#9a8f87', note: '普通顾客，可查看会员餐食' },
+  { id: 'basic', name: '普通会员', rank: 2, minPoints: 2, maxPoints: 1000, color: '#6f7f8f', note: '可享轻食与基础饮品' },
+  { id: 'silver', name: '银卡会员', rank: 3, minPoints: 1001, maxPoints: 2000, color: '#8c96a3', note: '可享基础餐食与精品饮品' },
+  { id: 'gold', name: '金卡会员', rank: 4, minPoints: 2001, maxPoints: 3000, color: '#b48732', note: '可享正餐、甜品和精选饮品' },
+  { id: 'diamond', name: '钻石会员', rank: 5, minPoints: 3001, maxPoints: 4000, color: '#6b7fd7', note: '可享全量餐食与门店限定款' },
+  { id: 'special', name: '特级会员', rank: 6, minPoints: 4001, maxPoints: 6000, color: '#7c4d8b', note: '可享全量餐食与高级限定款' },
 ];
 
 const demoMembers = [

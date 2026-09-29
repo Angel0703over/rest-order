@@ -1,10 +1,11 @@
-const { ensureAdminAccess, getCurrentUser } = require('../../../utils/auth');
+const { ensureAdminAccess, getCurrentUser, getStaffWorkbenchModules } = require('../../../utils/auth');
 const { getOrderStatusOptions } = require('../../../utils/orders');
 const { getStaffOrders, updateOrderStatus } = require('../../../utils/cloudApi');
 
 Page({
   data: {
     currentUser: null,
+    modules: [],
     orders: [],
     statusOptions: getOrderStatusOptions(),
     feedback: '',
@@ -15,7 +16,11 @@ Page({
     if (!ensureAdminAccess(wx, 'orders.update')) {
       return;
     }
-    this.setData({ currentUser: getCurrentUser() });
+    const currentUser = getCurrentUser();
+    this.setData({
+      currentUser,
+      modules: getStaffWorkbenchModules(currentUser),
+    });
     this.refreshOrders();
   },
 
@@ -40,6 +45,14 @@ Page({
           feedback: error.message || '订单加载失败',
         });
       });
+  },
+
+  onOpenModule(event) {
+    const url = event.currentTarget.dataset.url;
+    if (url === '/pages/admin/orders/index') {
+      return;
+    }
+    wx.navigateTo({ url });
   },
 
   onStatusChange(event) {
