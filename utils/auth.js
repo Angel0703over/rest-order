@@ -73,8 +73,78 @@ const rolePermissions = {
 
 const staffWorkbenchModuleIds = ['categories', 'meals', 'orders'];
 
+let cloudSessionUser = null;
+let sessionSettled = false;
+let resolveSessionSettled = () => {};
+let sessionSettledPromise = new Promise((resolve) => {
+  resolveSessionSettled = resolve;
+});
+
+function getAppInstance() {
+  return typeof getApp === 'function' ? getApp() : null;
+}
+
+function normalizeSessionUser(user) {
+  if (!user || !user.role) {
+    return null;
+  }
+  return {
+    id: user.id || '',
+    role: user.role,
+    memberId: user.memberId || '',
+    staffId: user.staffId || '',
+    name: user.name || '',
+  };
+}
+
+function settleSession() {
+  if (!sessionSettled) {
+    sessionSettled = true;
+    resolveSessionSettled();
+  }
+}
+
+function applyCloudSession(session) {
+  cloudSessionUser = normalizeSessionUser(session && session.user);
+  settleSession();
+  return cloudSessionUser;
+}
+
+function markSessionFailed() {
+  settleSession();
+}
+
+function whenSessionSettled() {
+  return sessionSettledPromise;
+}
+
+function hasCloudSession() {
+  return Boolean(cloudSessionUser);
+}
+
+function isCloudConfigured() {
+  const app = getAppInstance();
+  return Boolean(app && app.globalData && app.globalData.cloudReady);
+}
+
+function isSessionPending() {
+  if (!isCloudConfigured() || hasCloudSession()) {
+    return false;
+  }
+  const app = getAppInstance();
+  const globalData = app.globalData || {};
+  if (globalData.cloudSessionReady || globalData.cloudSessionError) {
+    return false;
+  }
+  return true;
+}
+
 function getCurrentUser(storage = wx) {
-  const userId = storage.getStorageSync(CURRENT_USER_STORAGE_KEY) || defaultUserId;
+  if (cloudSessionUser) {
+    return { ...cloudSessionUser };
+  }
+  const source = storage && typeof storage.getStorageSync === 'function' ? storage : {};
+  const userId = (source.getStorageSync && source.getStorageSync(CURRENT_USER_STORAGE_KEY)) || defaultUserId;
   return mockUsers.find((user) => user.id === userId) || mockUsers.find((user) => user.id === defaultUserId);
 }
 
@@ -134,18 +204,60 @@ function getLoginEntryPage(user) {
 }
 
 function ensureAdminAccess(storage = wx, permission = '') {
-  const access = getAdminAccess(getCurrentUser(storage));
-  const permissionAccess = permission ? getAdminAccess(getCurrentUser(storage), permission) : access;
-  if (!permissionAccess.allowed) {
-    wx.redirectTo({ url: permissionAccess.redirectUrl });
+  const currentUser = getCurrentUser(storage);
+  const access = permission ? getAdminAccess(currentUser, permission) : getAdminAccess(currentUser);
+  if (!access.allowed) {
+    const target = storage && typeof storage.redirectTo === 'function'
+      ? storage
+      : (typeof wx !== 'undefined' && wx && typeof wx.redirectTo === 'function' ? wx : null);
+    if (target) {
+      target.redirectTo({ url: access.redirectUrl });
+    }
   }
-  return permissionAccess.allowed;
+  return access.allowed;
+}
+
+function enterAdminPage(page, permission, onGranted) {
+  const wxLike = typeof wx !== 'undefined' ? wx : null;
+  const run = () => {
+    if (ensureAdminAccess(wxLike, permission)) {
+      if (typeof onGranted === 'function') {
+        onGranted();
+      }
+      return true;
+    }
+    return false;
+  };
+
+  if (isSessionPending()) {
+    if (page && page.__sessionGuardPending) {
+      return false;
+    }
+    if (page) {
+      page.__sessionGuardPending = true;
+    }
+    const pending = whenSessionSettled().then(() => {
+      if (page) {
+        page.__sessionGuardPending = false;
+        page.__sessionGuardPromise = null;
+      }
+      return run();
+    });
+    if (page) {
+      page.__sessionGuardPromise = pending;
+    }
+    return false;
+  }
+
+  return run();
 }
 
 module.exports = {
   ADMIN_HOME_PAGE,
   NO_ACCESS_PAGE,
   STAFF_HOME_PAGE,
+  applyCloudSession,
+  enterAdminPage,
   getAdminModules,
   getStaffWorkbenchModules,
   getAdminAccess,
@@ -154,6 +266,10 @@ module.exports = {
   getLoginEntryPage,
   ensureAdminAccess,
   hasAdminPermission,
+  hasCloudSession,
   isAdmin,
+  isSessionPending,
+  markSessionFailed,
   setCurrentUserId,
+  whenSessionSettled,
 };

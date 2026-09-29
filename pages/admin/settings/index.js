@@ -1,4 +1,4 @@
-const { ensureAdminAccess } = require('../../../utils/auth');
+const { enterAdminPage } = require('../../../utils/auth');
 const { adminSettings } = require('../../../utils/cloudApi');
 const { defaultStoreSettings, normalizeStoreSettings, validateStoreSettings } = require('../../../utils/settings');
 
@@ -34,10 +34,7 @@ Page({
   },
 
   onShow() {
-    if (!ensureAdminAccess(wx, 'settings.manage')) {
-      return;
-    }
-    this.refreshSettings();
+    enterAdminPage(this, 'settings.manage', () => this.refreshSettings());
   },
 
   refreshSettings(selectedRoomId = this.data.selectedRoomId) {

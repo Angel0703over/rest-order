@@ -1,4 +1,4 @@
-const { ensureAdminAccess, getCurrentUser, getStaffWorkbenchModules } = require('../../../utils/auth');
+const { enterAdminPage, getCurrentUser, getStaffWorkbenchModules } = require('../../../utils/auth');
 const { getOrderStatusOptions } = require('../../../utils/orders');
 const { getStaffOrders, updateOrderStatus } = require('../../../utils/cloudApi');
 
@@ -13,15 +13,14 @@ Page({
   },
 
   onShow() {
-    if (!ensureAdminAccess(wx, 'orders.update')) {
-      return;
-    }
-    const currentUser = getCurrentUser();
-    this.setData({
-      currentUser,
-      modules: getStaffWorkbenchModules(currentUser),
+    enterAdminPage(this, 'orders.update', () => {
+      const currentUser = getCurrentUser();
+      this.setData({
+        currentUser,
+        modules: getStaffWorkbenchModules(currentUser),
+      });
+      this.refreshOrders();
     });
-    this.refreshOrders();
   },
 
   refreshOrders() {

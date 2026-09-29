@@ -54,7 +54,7 @@
 - [x] 已建立本地权限守卫。
 - [x] 已建立顾客端、店长端、员工端三类页面入口。
 - [x] 已使用本地 mock 数据和微信本地缓存模拟业务数据。
-- [ ] 接入真实微信登录。
+- [x] 接入真实微信登录（前端身份统一为云会话，见 2026-09-29 小节）。
 - [x] 用云开发替换本地 mock 数据。（核心点单链路、订单、后台维护、门店配置和会员识别已迁移；本地 mock 仅作兜底演示）
 
 ## 五、微信云开发阶段
@@ -140,3 +140,11 @@
 - [x] 顾客端点单页餐食图片绑定 `binderror`，云 `fileID` 失效时自动回退默认 SVG，避免出现破图。
 - [x] 店长端餐食维护列表缩略图与编辑器预览图同样增加失败回退。
 - [x] 补充 `tests/menu.test.js` 占位兜底用例。
+
+## 2026-09-29 前端身份统一为云会话
+- [x] `utils/auth.js` 引入云会话身份：`applyCloudSession` 缓存 `login` 云函数返回的用户，`getCurrentUser` 优先返回云会话身份，本地 mock 仅在无云会话时兜底。
+- [x] 新增 `enterAdminPage(page, permission, onGranted)` 守卫：云会话未就绪时不跳转、不放行，待会话就绪（或失败）后重新判定，避免真实店长冷启动被误跳无权限页。
+- [x] `utils/session.js` 在 `storeSession` 时推送会话到前端身份来源；新增 `markSessionFailed`；`app.js` 处理云未配置/登录失败分支，避免会话永久挂起。
+- [x] 九个管理页（`pages/admin/*` 与 `pages/staff/home`）的 `onShow` 改用 `enterAdminPage`，移除对本地 mock 身份的 `ensureAdminAccess` 直接调用。
+- [x] `ensureAdminAccess` / `getCurrentUser` 增加防御：storage 或 redirect 能力缺失时不再抛错。
+- [x] 补充 `tests/auth.test.js`（云会话身份优先、未就绪不跳转、就绪放行、顾客跳无权限）与 `tests/session.test.js`（会话写入前端身份、失败结算）用例。

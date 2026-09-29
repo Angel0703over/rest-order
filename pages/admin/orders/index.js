@@ -5,7 +5,7 @@ const {
   filterOrdersByStatus,
   getOrderStatusOptions,
 } = require('../../../utils/orders');
-const { ensureAdminAccess } = require('../../../utils/auth');
+const { enterAdminPage } = require('../../../utils/auth');
 const { getStaffOrders, updateOrderStatus } = require('../../../utils/cloudApi');
 
 const AUTO_REFRESH_INTERVAL = 15000;
@@ -35,11 +35,10 @@ Page({
   },
 
   onShow() {
-    if (!ensureAdminAccess(wx, 'orders.update')) {
-      return;
-    }
-    this.refreshOrders();
-    this.startAutoRefresh();
+    enterAdminPage(this, 'orders.update', () => {
+      this.refreshOrders();
+      this.startAutoRefresh();
+    });
   },
 
   onHide() {

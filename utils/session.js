@@ -1,6 +1,7 @@
 const { loginWithCloud } = require('./cloudApi');
 const { DEV_FORCE_CUSTOMER_ENTRY } = require('./cloudConfig');
 const { BIND_PHONE_PAGE, CUSTOMER_ENTRY_PAGE } = require('./routes');
+const { applyCloudSession, markSessionFailed: markAuthSessionFailed } = require('./auth');
 
 const TAB_PAGES = [
   '/pages/index/index',
@@ -12,12 +13,24 @@ function storeSession(app, session) {
   if (app && app.globalData) {
     app.globalData.cloudSession = session;
     app.globalData.cloudSessionReady = true;
+    app.globalData.cloudSessionError = '';
   }
+  applyCloudSession(session);
   return session;
 }
 
 function loginAndStoreSession(app, wxLike = wx) {
   return loginWithCloud(wxLike).then((session) => storeSession(app, session));
+}
+
+function markSessionFailed(app, error) {
+  const message = (error && error.message) || String(error || '云端登录失败');
+  if (app && app.globalData) {
+    app.globalData.cloudSessionError = message;
+    app.globalData.cloudSessionReady = false;
+  }
+  markAuthSessionFailed();
+  return message;
 }
 
 function isTabPage(url) {
@@ -50,6 +63,7 @@ function redirectToEntryPage(entryPage, currentPage = CUSTOMER_ENTRY_PAGE, wxLik
 
 module.exports = {
   loginAndStoreSession,
+  markSessionFailed,
   redirectToEntryPage,
   storeSession,
 };

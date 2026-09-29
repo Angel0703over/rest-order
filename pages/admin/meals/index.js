@@ -1,5 +1,5 @@
 const { categories: fallbackCategories, meals: fallbackMeals, memberLevels: fallbackLevels } = require('../../../data/store');
-const { ensureAdminAccess } = require('../../../utils/auth');
+const { enterAdminPage } = require('../../../utils/auth');
 const { getAdminMealDraft, getMealImageLabel, validateMealDraft } = require('../../../utils/admin');
 const { adminMeals, uploadMealImage } = require('../../../utils/cloudApi');
 const { DEFAULT_MEAL_IMAGE } = require('../../../utils/menu');
@@ -37,10 +37,7 @@ Page({
   },
 
   onShow() {
-    if (!ensureAdminAccess(wx, 'meal.manage')) {
-      return;
-    }
-    this.refreshMeals();
+    enterAdminPage(this, 'meal.manage', () => this.refreshMeals());
   },
 
   refreshMeals(selectedMealId = this.data.selectedMealId) {

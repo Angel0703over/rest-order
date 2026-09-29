@@ -1,5 +1,5 @@
 const { categories: fallbackCategories } = require('../../../data/store');
-const { ensureAdminAccess } = require('../../../utils/auth');
+const { enterAdminPage } = require('../../../utils/auth');
 const { validateCategoryDraft } = require('../../../utils/admin');
 const { adminCategories } = require('../../../utils/cloudApi');
 
@@ -17,10 +17,7 @@ Page({
   },
 
   onShow() {
-    if (!ensureAdminAccess(wx, 'menu.manage')) {
-      return;
-    }
-    this.refreshCategories();
+    enterAdminPage(this, 'menu.manage', () => this.refreshCategories());
   },
 
   refreshCategories(selectedCategoryId = this.data.selectedCategoryId) {

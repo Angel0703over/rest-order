@@ -1,5 +1,5 @@
 const { staffMembers: fallbackStaffMembers } = require('../../../data/users');
-const { ensureAdminAccess } = require('../../../utils/auth');
+const { enterAdminPage } = require('../../../utils/auth');
 const { getStaffDraft, validateStaffDraft } = require('../../../utils/admin');
 const { adminStaff } = require('../../../utils/cloudApi');
 
@@ -24,10 +24,7 @@ Page({
   },
 
   onShow() {
-    if (!ensureAdminAccess(wx, 'staff.manage')) {
-      return;
-    }
-    this.refreshStaff();
+    enterAdminPage(this, 'staff.manage', () => this.refreshStaff());
   },
 
   refreshStaff(selectedStaffId = this.data.selectedStaffId) {

@@ -1,5 +1,5 @@
 const { demoMembers, memberLevels: fallbackLevels } = require('../../../data/store');
-const { ensureAdminAccess } = require('../../../utils/auth');
+const { enterAdminPage } = require('../../../utils/auth');
 const { matchMemberLevelByPoints, searchMembersForLookup } = require('../../../utils/admin');
 const { adminMembers } = require('../../../utils/cloudApi');
 
@@ -72,10 +72,7 @@ Page({
   },
 
   onShow() {
-    if (!ensureAdminAccess(wx, 'member.manage')) {
-      return;
-    }
-    this.refreshMembers();
+    enterAdminPage(this, 'member.manage', () => this.refreshMembers());
   },
 
   refreshMembers(selectedMemberId = this.data.selectedMemberId) {

@@ -1,4 +1,4 @@
-const { ensureAdminAccess, getAdminModules, getCurrentUser } = require('../../../utils/auth');
+const { enterAdminPage, getAdminModules, getCurrentUser } = require('../../../utils/auth');
 
 Page({
   data: {
@@ -7,13 +7,12 @@ Page({
   },
 
   onShow() {
-    if (!ensureAdminAccess()) {
-      return;
-    }
-    const currentUser = getCurrentUser();
-    this.setData({
-      currentUser,
-      modules: getAdminModules(currentUser),
+    enterAdminPage(this, '', () => {
+      const currentUser = getCurrentUser();
+      this.setData({
+        currentUser,
+        modules: getAdminModules(currentUser),
+      });
     });
   },
 

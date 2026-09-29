@@ -1,5 +1,5 @@
 const { memberLevels: fallbackLevels } = require('../../../data/store');
-const { ensureAdminAccess } = require('../../../utils/auth');
+const { enterAdminPage } = require('../../../utils/auth');
 const { getAdminLevelDraft, validateMemberLevelDraft } = require('../../../utils/admin');
 const { adminLevels } = require('../../../utils/cloudApi');
 
@@ -17,10 +17,7 @@ Page({
   },
 
   onShow() {
-    if (!ensureAdminAccess(wx, 'member.manage')) {
-      return;
-    }
-    this.refreshLevels();
+    enterAdminPage(this, 'member.manage', () => this.refreshLevels());
   },
 
   refreshLevels(selectedLevelId = this.data.selectedLevelId) {
