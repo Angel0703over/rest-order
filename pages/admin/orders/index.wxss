@@ -87,3 +87,59 @@
   margin-top: 18rpx;
   text-align: center;
 }
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.filter-chip {
+  background: #fffaf6;
+  border: 1rpx solid rgba(120, 82, 66, 0.12);
+  border-radius: 999rpx;
+  color: #7a4f3e;
+  font-size: 23rpx;
+  line-height: 1;
+  padding: 14rpx 20rpx;
+}
+
+.filter-chip-active {
+  background: #2f2520;
+  border-color: #2f2520;
+  color: #fff8f2;
+  font-weight: 700;
+}
+
+.pending-banner {
+  align-items: center;
+  background: #7a4f3e;
+  border-radius: 12rpx;
+  color: #fff8f2;
+  display: flex;
+  font-size: 25rpx;
+  font-weight: 700;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+  padding: 16rpx 20rpx;
+}
+
+.pending-dot {
+  background: #ffd27a;
+  border-radius: 999rpx;
+  height: 16rpx;
+  width: 16rpx;
+}
+
+.refresh-hint {
+  color: #9a6b57;
+  font-size: 21rpx;
+  margin-top: 10rpx;
+  text-align: right;
+}
+
+.order-card-pending {
+  border-color: rgba(122, 79, 62, 0.55);
+}
+

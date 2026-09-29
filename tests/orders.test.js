@@ -1,6 +1,11 @@
 const assert = require('node:assert/strict');
 const {
   addOrder,
+  buildOrderFilters,
+  countPendingOrders,
+  filterNewOrders,
+  filterOrdersByStatus,
+  getOrderFilters,
   getTodayOrders,
   getOrderStatusOptions,
   updateOrderStatus,
@@ -47,4 +52,46 @@ test('订单状态可以流转到制作中和已完成', () => {
   const orders = updateOrderStatus([todayOrder], todayOrder.id, '制作中');
   assert.equal(orders[0].status, '制作中');
   assert.throws(() => updateOrderStatus([todayOrder], todayOrder.id, '乱填状态'), /请选择有效订单状态/);
+});
+
+const mixedOrders = [
+  { ...todayOrder, id: 'p1', status: '已提交' },
+  { ...todayOrder, id: 'p2', status: '已提交' },
+  { ...todayOrder, id: 'm1', status: '制作中' },
+  { ...todayOrder, id: 'd1', status: '已完成' },
+  { ...todayOrder, id: 'c1', status: '已取消' },
+];
+
+test('订单可按状态筛选，空状态返回全部', () => {
+  assert.equal(filterOrdersByStatus(mixedOrders, '').length, 5);
+  assert.deepEqual(filterOrdersByStatus(mixedOrders, '已提交').map((order) => order.id), ['p1', 'p2']);
+
+  const original = mixedOrders.slice();
+  filterOrdersByStatus(original, '制作中');
+  assert.equal(original.length, 5);
+});
+
+test('筛选标签携带各状态计数', () => {
+  const filters = buildOrderFilters(mixedOrders);
+  assert.deepEqual(filters.map((filter) => filter.label), ['全部', '待处理', '制作中', '已完成', '已取消']);
+  assert.deepEqual(filters.map((filter) => filter.count), [5, 2, 1, 1, 1]);
+  assert.deepEqual(getOrderFilters().map((filter) => filter.key), ['all', 'pending', 'making', 'done', 'canceled']);
+});
+
+test('待处理订单计数用于提醒角标', () => {
+  assert.equal(countPendingOrders(mixedOrders), 2);
+  assert.equal(countPendingOrders([]), 0);
+});
+
+test('对比前后两次订单可识别新到的待处理订单', () => {
+  const previous = [mixedOrders[0], mixedOrders[2]];
+  const incoming = [
+    { ...todayOrder, id: 'p9', status: '已提交' },
+    mixedOrders[0],
+    mixedOrders[2],
+    { ...todayOrder, id: 'd9', status: '已完成' },
+  ];
+
+  assert.deepEqual(filterNewOrders(previous, incoming).map((order) => order.id), ['p9']);
+  assert.deepEqual(filterNewOrders(previous, incoming, '').map((order) => order.id), ['p9', 'd9']);
 });

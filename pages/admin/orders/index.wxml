@@ -1,27 +1,51 @@
 <view class="admin-page">
   <view class="admin-header">
     <view>
-      <view class="eyebrow">订单处理</view>
+      <view class="eyebrow">订单处理 · 每 {{autoRefreshSeconds}} 秒自动刷新</view>
       <view class="title">今日订单</view>
     </view>
-    <view class="pill">{{orders.length}} 单</view>
+    <view class="pill">{{visibleOrders.length}} 单</view>
+  </view>
+
+  <view class="filter-bar">
+    <view
+      wx:for="{{filters}}"
+      wx:key="key"
+      class="filter-chip {{item.key === activeFilterKey ? 'filter-chip-active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="onFilterTap"
+    >
+      {{item.label}} {{item.count}}
+    </view>
+  </view>
+
+  <view wx:if="{{pendingCount > 0}}" class="pending-banner">
+    <text class="pending-dot"></text>
+    <text>待处理 {{pendingCount}} 单</text>
   </view>
 
   <view wx:if="{{feedback}}" class="feedback">{{feedback}}</view>
+  <view wx:if="{{updatedAt}}" class="refresh-hint">最近刷新 {{updatedAt}}</view>
 
-  <view wx:if="{{orders.length === 0}}" class="empty-card panel">
-    <view class="empty-title">今日暂无订单</view>
-    <view class="empty-text">顾客提交后，订单会显示在这里。</view>
+  <view wx:if="{{visibleOrders.length === 0}}" class="empty-card panel">
+    <view class="empty-title">{{orders.length === 0 ? '今日暂无订单' : '该状态下暂无订单'}}</view>
+    <view class="empty-text">
+      {{orders.length === 0 ? '顾客提交后，订单会显示在这里。' : '切换上方筛选查看其他状态的订单。'}}
+    </view>
   </view>
 
   <view wx:else class="order-list">
-    <view wx:for="{{orders}}" wx:key="id" class="order-card">
+    <view
+      wx:for="{{visibleOrders}}"
+      wx:key="id"
+      class="order-card {{item.status === '已提交' ? 'order-card-pending' : ''}}"
+    >
       <view class="order-head">
         <view>
-          <view class="order-id">已下单</view>
+          <view class="order-id">下单时间</view>
           <view class="order-time">{{item.createdAt}}</view>
         </view>
-        <view class="status-tag">{{item.status}}</view>
+        <view class="status-tag {{item.status === '已提交' ? 'status-tag-dark' : ''}}">{{item.status}}</view>
       </view>
 
       <view class="location-box">
