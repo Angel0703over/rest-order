@@ -1,3 +1,32 @@
+﻿# 会员数据导入说明（2026-05-19）
+
+本次会员等级改为按累计积分匹配：
+
+- 普通：0 至 1
+- 普通会员：2 至 1000
+- 银卡会员：1001 至 2000
+- 金卡会员：2001 至 3000
+- 钻石会员：3001 至 4000
+- 特级会员：4001 至 6000
+
+需要在 CloudBase 中导入或更新：
+
+1. `memberLevels` 集合导入 `cloud-database/memberLevels.import.json`。
+2. `members` 集合导入 `cloud-database/members.import.json`，共 544 条会员记录。
+3. `members` 集合权限继续使用 `ADMINONLY`。
+
+会员导入字段包含 Excel 表头中的会员卡号、会员姓名、标签、会员手机号、会员生日、会员称谓、级别名称、分组名称、QQ、微信号、邮箱、用户地址、用户喜好、可用金额、备注信息、累计消费金额、可用积分、累计积分、已使用积分、添加时间、会员过期时间、计次项目、属于店铺、最后消费时间。
+
+实际可点餐等级使用 `totalPoints` 自动计算后的 `levelId`，Excel 原始级别名称保存在 `sourceLevelName`，便于店长核对历史数据。
+
+需要重新上传并部署：
+
+- `cloudfunctions/adminMembers`
+- `cloudfunctions/adminLevels`
+- `cloudfunctions/getMyMemberProfile`
+- `cloudfunctions/getCustomerMenu`
+- `cloudfunctions/createOrder`
+
 # 微信云开发接入说明
 
 ## 当前阶段
@@ -89,8 +118,8 @@ const CLOUD_ENV_ID = '你的云环境 ID';
 
 正常返回应该包含：
 
-- `memberLevels`：4 档会员等级。
-- `categories`：6 个餐食分类。
+- `memberLevels`：6 档会员等级。
+- `categories`：4 个餐食分类。
 - `meals`：今日上架餐食，并带有 `available` 和 `lockReason`。
 
 ## 第一批云函数迁移顺序
@@ -107,9 +136,9 @@ const CLOUD_ENV_ID = '你的云环境 ID';
 前端隐藏入口只是体验优化，真实权限必须在云函数内判断：
 
 - `customer`：只能读取自己的会员信息、菜单和订单，能创建订单。
-- `staff`：只能读取和更新订单状态。
+- `staff`：可以维护餐食分类、餐食上下架/基础信息，并读取和更新订单状态。
 - `owner`：可以管理店员、分类、餐食、会员等级和订单。
-- `createOrder` 部署前检查：在 CloudBase 文档型数据库中新建 `orders` 集合，权限选 `无权限 [ADMINONLY]`；上传并部署 `cloudfunctions/createOrder`，选择“云端安装依赖”。顾客端提交订单会调用该云函数，不再写入本地缓存。
+- `createOrder` 部署前检查：在 CloudBase 文档型数据库中新建 `orders` 集合，权限选 `无权限[ADMINONLY]`；上传并部署 `cloudfunctions/createOrder`，选择“云端安装依赖”。顾客端提交订单会调用该云函数，不再写入本地缓存。
 
 ## 本地调试入口开关
 
@@ -138,7 +167,7 @@ const CLOUD_ENV_ID = '你的云环境 ID';
 
 1. `cloudfunctions/adminCategories`
 
-部署后店长“分类管理”页会通过云函数读取、创建、修改、删除 `categories` 集合。删除采用软删除：把 `enabled` 改为 `false`。
+部署后“分类管理”页会通过云函数读取、创建、修改、删除 `categories` 集合。店长和店员都可以调用该云函数。删除采用软删除：把 `enabled` 改为 `false`。
 
 ## 店长会员等级维护云函数
 
@@ -154,21 +183,25 @@ const CLOUD_ENV_ID = '你的云环境 ID';
 
 1. `cloudfunctions/adminMeals`
 
-部署后店长“餐食维护”页会通过云函数读取 `meals`、`categories`、`memberLevels`，并能保存餐食名称、分类、描述、图片路径、适用会员等级和今日上下架状态。
+部署后“餐食维护”页会通过云函数读取 `meals`、`categories`、`memberLevels`，并能保存餐食名称、分类、描述、图片路径、适用会员等级和今日上下架状态。店长和店员都可以调用该云函数。
 
 ## 餐食图片云存储
 
 店长在“餐食维护”页点击“上传图片”后，会通过 `wx.cloud.uploadFile` 上传到云存储的 `meal-images/` 目录，并把返回的 `fileID` 回填到 `meals.image`。上传后仍需点击“保存餐食”，才会把新的 `fileID` 写入云数据库。
+
 ## 店长员工管理云函数
+
 当前员工管理不再单独创建 `staff` 集合，统一使用 `users` 集合作为身份与员工资料的数据源。这样 `adminStaff` 新增、停用员工后，`login` 云函数会直接按同一条 `users` 记录判断入口。
 
 需要上传并部署：
+
 1. `cloudfunctions/adminStaff`
 2. `cloudfunctions/login`（本次增加了停用员工不能进入员工端的规则）
 
 部署时仍选择“上传并部署：云端安装依赖”。
 
 `users` 里的店员记录建议字段：
+
 ```json
 {
   "openid": "",
@@ -185,32 +218,37 @@ const CLOUD_ENV_ID = '你的云环境 ID';
 ```
 
 说明：
+
 - 店长端“员工管理”页会通过 `adminStaff` 读取、创建、保存和停用 `users` 中的员工记录。
 - 新增员工时 `openid` 先为空；员工要真正登录员工端时，需要把该员工微信登录得到的真实 `openid` 绑定到对应记录。
 - 停用员工会把 `active` 改成 `false`，不会物理删除记录；停用后该 openid 再登录会进入无权限页。
 
 ## 门店设置 settings
+
 在云数据库创建 `settings` 集合，权限选择 `无权限[ADMINONLY]`。然后导入：
 
 - `cloud-database/settings.json`
 
-该文件是一行 JSON，适合 CloudBase 的 JSON Lines 导入方式。默认文档 `_id` 是 `store`，包含：
+该文件是一条 JSON，适合 CloudBase 的 JSON Lines 导入方式。默认文档 `_id` 是 `store`，包含：
 
 - `storeName`：门店名称。
 - `isOpen`：是否营业，`false` 时顾客端不能提交订单。
 - `locations`：房间/区域列表，每个区域包含 `tables` 桌号列表。
 
 需要上传并部署：
+
 1. `cloudfunctions/getStoreSettings`
 2. `cloudfunctions/adminSettings`
 3. `cloudfunctions/createOrder`（本次增加了营业状态和房间/桌号云端校验）
 
 部署后：
+
 - 顾客点单页会通过 `getStoreSettings` 读取门店名称、营业状态和房间/桌号。
 - 店长工作台会多一个“门店设置”入口，用 `adminSettings` 保存配置。
 - 店长把营业状态改为暂停后，顾客端会提示暂停点单，`createOrder` 云函数也会拒绝新订单。
 
 ## 顾客会员资料 members
+
 在云数据库创建 `members` 集合，权限选择 `无权限[ADMINONLY]`。然后导入：
 
 - `cloud-database/members.json`
@@ -218,6 +256,7 @@ const CLOUD_ENV_ID = '你的云环境 ID';
 该文件是 JSON Lines 格式，包含 4 条演示会员。初始 `openid` 为空，正式测试某个微信用户时，把该顾客真实 `openid` 填到对应会员记录里。
 
 会员记录字段示例：
+
 ```json
 {
   "_id": "u1001",
@@ -232,15 +271,18 @@ const CLOUD_ENV_ID = '你的云环境 ID';
 ```
 
 需要上传并部署：
+
 1. `cloudfunctions/getMyMemberProfile`
 2. `cloudfunctions/login`（本次增加了从 `members` 识别顾客会员身份）
 
 部署后：
+
 - 顾客点单页会优先读取自己的云端会员资料，并按真实 `levelId` 展示可点餐食。
 - “我的”页会展示云端会员昵称、手机号、会员等级和权益。
 - 如果没有绑定 `members.openid`，页面会继续使用本地演示会员兜底，方便开发调试。
 
 ## 店长会员管理云函数
+
 需要上传并部署：
 
 1. `cloudfunctions/adminMembers`
