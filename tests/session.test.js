@@ -128,6 +128,31 @@ async function run() {
     assert.equal(redirected, false);
     assert.deepEqual(navigation, []);
   });
+
+  await test('默认不再抑制店长/员工入口跳转，保证三端登录闭环', () => {
+    const {
+      DEV_FORCE_CUSTOMER_ENTRY,
+      isForceCustomerEntryEnabled,
+    } = require('../utils/cloudConfig');
+
+    assert.equal(DEV_FORCE_CUSTOMER_ENTRY, false);
+    assert.equal(isForceCustomerEntryEnabled(), false);
+    assert.equal(isForceCustomerEntryEnabled('develop'), false);
+    assert.equal(isForceCustomerEntryEnabled('release'), false);
+  });
+
+  await test('代客下单开关默认开启，仅正式版关闭', () => {
+    const {
+      DEV_ALLOW_OWNER_CUSTOMER_ORDER,
+      isOwnerCustomerOrderAllowed,
+    } = require('../utils/cloudConfig');
+
+    assert.equal(DEV_ALLOW_OWNER_CUSTOMER_ORDER, true);
+    assert.equal(isOwnerCustomerOrderAllowed(), true);
+    assert.equal(isOwnerCustomerOrderAllowed('develop'), true);
+    assert.equal(isOwnerCustomerOrderAllowed('trial'), false);
+    assert.equal(isOwnerCustomerOrderAllowed('release'), false);
+  });
 }
 
 run();

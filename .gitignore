@@ -59,3 +59,7 @@ cloudbase-debug.log*
 # Keep cloud database seed files, but ignore exported backups by default.
 cloud-database/exports/
 cloud-database/backups/
+
+# users 导入文件含真实 openid，仅本地生成，不入库（模板见 scripts/generate-users-seed.js）
+cloud-database/users.import.json
+.tmp/

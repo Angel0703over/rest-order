@@ -148,3 +148,13 @@
 - [x] 九个管理页（`pages/admin/*` 与 `pages/staff/home`）的 `onShow` 改用 `enterAdminPage`，移除对本地 mock 身份的 `ensureAdminAccess` 直接调用。
 - [x] `ensureAdminAccess` / `getCurrentUser` 增加防御：storage 或 redirect 能力缺失时不再抛错。
 - [x] 补充 `tests/auth.test.js`（云会话身份优先、未就绪不跳转、就绪放行、顾客跳无权限）与 `tests/session.test.js`（会话写入前端身份、失败结算）用例。
+
+## 2026-11-18 上线收敛：三端登录闭环
+- [x] 拆分 `utils/cloudConfig.js` 中语义混淆的单一开关：`DEV_FORCE_CUSTOMER_ENTRY`（抑制入口跳转）与 `DEV_ALLOW_OWNER_CUSTOMER_ORDER`（店长代客下单）分离。
+- [x] 修正 `FORCE_CUSTOMER_ENTRY_OVERRIDE` 默认值为 `false`：此前为 `true` 会导致店长/员工登录后被卡在顾客页，三端登录无法验证。
+- [x] 入口跳转开关改为按运行版本判定，仅 `develop` 生效；体验版/正式版一律放行。
+- [x] 新增 `scripts/generate-users-seed.js`：校验 openid 并生成 `cloud-database/users.import.json`（JSON Lines），替代控制台手工录入；含真实 openid 的文件已加入 `.gitignore`。
+- [x] `cloud-development.md` 补充脚本用法、`active` 字段语义，并修正「独立 staff 集合」的过期描述。
+- [x] 新增 `docs/launch-checklist.md`：真机三端验收清单、交叉验证用例与故障速查。
+- [ ] 推送本地提交至 `origin/master`（当前环境网络不可达 GitHub，需在本机执行）。
+- [ ] 按验收清单完成真机三端走查。

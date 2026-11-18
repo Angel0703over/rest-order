@@ -15,7 +15,7 @@ const {
   getMyMemberProfile,
   getStoreSettings,
 } = require('../../utils/cloudApi');
-const { DEV_FORCE_CUSTOMER_ENTRY } = require('../../utils/cloudConfig');
+const { DEV_ALLOW_OWNER_CUSTOMER_ORDER } = require('../../utils/cloudConfig');
 const { CUSTOMER_ENTRY_PAGE } = require('../../utils/routes');
 const { loginAndStoreSession, redirectToEntryPage } = require('../../utils/session');
 const { normalizeStoreSettings } = require('../../utils/settings');
@@ -302,7 +302,7 @@ Page({
         levelId: this.data.currentMember.levelId,
       },
       mealIds: this.data.selectedMealIds,
-      devForceCustomerOrder: DEV_FORCE_CUSTOMER_ENTRY,
+      devForceCustomerOrder: DEV_ALLOW_OWNER_CUSTOMER_ORDER,
       location: {
         roomId: this.data.selectedRoom.id,
         roomName: this.data.selectedRoom.name,

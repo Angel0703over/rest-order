@@ -59,7 +59,27 @@ const CLOUD_ENV_ID = '你的云环境 ID';
 
 ## users 集合初始化
 
-先在云数据库里创建 `users` 集合，再新增一条自己的店长身份记录。把下面的 `openid` 换成你刚刚测试 `login` 得到的真实 openid：
+`users` 集合是身份与权限的唯一数据源，登录、员工管理、所有管理端云函数都依赖它。**没有店长记录时，登录会退化为 default 顾客身份**，管理端无法进入。
+
+### 方式一：用脚本生成导入文件（推荐）
+
+先在小程序端临时调用一次 `login` 云函数拿到自己的真实 `openid`，然后：
+
+```bash
+# 店长记录
+node scripts/generate-users-seed.js --openid o你的真实openid --name 店长 --staff-id s1001
+
+# 店员记录（也可由店长端「员工管理」创建，无需脚本）
+node scripts/generate-users-seed.js --openid o店员的openid --role staff --name 陈小妹
+```
+
+脚本会校验 openid 并输出 `cloud-database/users.import.json`（JSON Lines）。该文件含真实 openid，已在 `.gitignore` 中忽略，不会入库。
+
+导入步骤：云开发控制台 → 数据库 → 新建 `users` 集合 → 导入 → 选择该文件 → 冲突处理选 **Upsert**。
+
+### 方式二：控制台手工新增
+
+把下面的 `openid` 换成 `login` 返回的真实值：
 
 ```json
 {
@@ -68,10 +88,13 @@ const CLOUD_ENV_ID = '你的云环境 ID';
   "name": "店长",
   "memberId": "",
   "staffId": "s1001",
+  "active": true,
   "createdAt": "2026-05-10 00:00:00",
   "updatedAt": "2026-05-10 00:00:00"
 }
 ```
+
+字段约定：`active: false` 的 `staff` 记录会被 `login` 判定为停用，跳转 `/pages/no-access/index`；`openid` 为空的员工记录是「已建但未绑定微信」状态，由员工首次登录后补写。
 
 角色说明：
 
@@ -85,9 +108,8 @@ const CLOUD_ENV_ID = '你的云环境 ID';
 
 建议先创建这些集合：
 
-- `users`：openid 与角色关系。
+- `users`：openid 与角色关系，同时承载店长/店员资料（不再使用独立的 `staff` 集合）。
 - `members`：顾客会员信息。
-- `staff`：店长和店员信息。
 - `memberLevels`：会员等级配置。
 - `categories`：餐食分类。
 - `meals`：餐食信息。
