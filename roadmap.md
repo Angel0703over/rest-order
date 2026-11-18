@@ -156,5 +156,5 @@
 - [x] 新增 `scripts/generate-users-seed.js`：校验 openid 并生成 `cloud-database/users.import.json`（JSON Lines），替代控制台手工录入；含真实 openid 的文件已加入 `.gitignore`。
 - [x] `cloud-development.md` 补充脚本用法、`active` 字段语义，并修正「独立 staff 集合」的过期描述。
 - [x] 新增 `docs/launch-checklist.md`：真机三端验收清单、交叉验证用例与故障速查。
-- [ ] 推送本地提交至 `origin/master`（当前环境网络不可达 GitHub，需在本机执行）。
+- [x] 推送本地提交至 `origin/master`（2026-11-18 完成，`c15c0ac`）。
 - [ ] 按验收清单完成真机三端走查。
