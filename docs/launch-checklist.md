@@ -10,7 +10,9 @@
 |---|---|---|
 | 云环境 ID | `utils/cloudConfig.js` 的 `CLOUD_ENV_ID` | 与云开发控制台环境 ID 一致 |
 | 云函数已上传 | 开发者工具 → 云开发 → 云函数 | 15 个云函数均为「已部署」最新版本 |
-| `users` 集合 | 云开发 → 数据库 | 已有店长记录，`openid` 为本机真实值 |
+| `users` 集合 | 云开发 → 数据库 | 已有店长记录，`openid` 为该微信号在小程序内的真实值 |
+
+> **取 openid 的正确位置**：小程序运行后 console 里 `app cloud login session` 的 `openid`。不要用开发者工具「登录账号」的 openid——两者不同，用错会导致店长身份不生效。
 | 其余集合 | 同上 | `members` / `memberLevels` / `categories` / `meals` / `settings` 均有数据 |
 | 入口跳转开关 | `utils/cloudConfig.js` | `FORCE_CUSTOMER_ENTRY_OVERRIDE = false`（默认），否则店长/员工会被卡在顾客页 |
 | 编译版本 | 开发者工具「真机调试」或「预览」 | 与当前代码一致，改代码后必须重新编译 |

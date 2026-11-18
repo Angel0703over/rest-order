@@ -158,3 +158,11 @@
 - [x] 新增 `docs/launch-checklist.md`：真机三端验收清单、交叉验证用例与故障速查。
 - [x] 推送本地提交至 `origin/master`（2026-11-18 完成，`c15c0ac`）。
 - [ ] 按验收清单完成真机三端走查。
+
+## 2026-11-18 模拟器验证（wechatide CLI）
+- [x] 打通微信开发者工具 CLI 直连：`D:\Develop\微信web开发者工具\wechatide.cmd`（v0.3.11）。`check-installation.mjs` 因检出 `nw.dll` 判 `nw_runtime_incompatible` 属**误报**，实际 CLI 可用。
+- [x] 验证入口跳转修复：店长身份冷启动由 `/pages/index/index` 正确 `reLaunch` 至 `/pages/admin/home/index`（截图 + console `source: database`、`role: owner` 佐证）。
+- [x] 验证订单页：状态筛选 5 项带计数、`0 单` 角标、最近刷新时间、空状态文案均正常。
+- [x] 验证顾客端点单页：左侧分类栏 + 8 款餐食卡片 + 房间桌号 + 等级角标 + 底部三 Tab，无白屏与 console 报错。
+- [x] 确认 `users` 集合**已存在店长记录**（openid `oSdR31...`，staffId `s1001`），无需再初始化。
+- [x] 记录坑：`check_wechatide_status` 返回的 `loginUser.openid` 是**开发者工具账号** openid，与**小程序内 openid** 不同，不能用于 `users` 集合。
