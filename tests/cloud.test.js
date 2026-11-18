@@ -433,6 +433,17 @@ async function run() {
           assert.equal(name, 'users');
           return {
             where(query) {
+              if (Object.prototype.hasOwnProperty.call(query, 'phone')) {
+                return {
+                  limit() {
+                    return {
+                      async get() {
+                        return { data: [] };
+                      },
+                    };
+                  },
+                };
+              }
               assert.deepEqual(query, { openid: 'openid-new-customer' });
               return {
                 limit() {
@@ -473,6 +484,21 @@ async function run() {
         phoneInfo: { phoneNumber: '15162965666' },
         db: {
           collection(name) {
+            if (name === 'users') {
+              return {
+                where() {
+                  return {
+                    limit() {
+                      return {
+                        async get() {
+                          return { data: [] };
+                        },
+                      };
+                    },
+                  };
+                },
+              };
+            }
             assert.equal(name, 'members');
             return {
               where() {
@@ -487,6 +513,154 @@ async function run() {
                             nickname: '徐曼',
                             active: true,
                             openid: 'openid-other',
+                          }],
+                        };
+                      },
+                    };
+                  },
+                };
+              },
+            };
+          },
+        },
+      }),
+      /已绑定其他微信/
+    );
+  });
+
+  await test('bindMemberPhone 员工手机号绑定成功并进入员工端', async () => {
+    const { main } = require('../cloudfunctions/bindMemberPhone/index');
+    const updates = [];
+    let memberQueried = false;
+
+    const result = await main({ code: 'phone-code' }, {
+      OPENID: 'openid-staff-1',
+      phoneInfo: { phoneNumber: '13800001111' },
+      now: () => new Date('2026-11-18T09:00:00+08:00'),
+      db: {
+        collection(name) {
+          if (name === 'members') {
+            memberQueried = true;
+            return {
+              where() {
+                return {
+                  limit() {
+                    return { async get() { return { data: [] }; } };
+                  },
+                };
+              },
+            };
+          }
+          assert.equal(name, 'users');
+          return {
+            where(query) {
+              assert.deepEqual(query, { phone: '13800001111' });
+              return {
+                limit() {
+                  return {
+                    async get() {
+                      return {
+                        data: [{
+                          _id: 'user-staff-1',
+                          openid: '',
+                          role: 'staff',
+                          staffId: 's1002',
+                          name: '陈小妹',
+                          phone: '13800001111',
+                          title: '美甲师',
+                          active: true,
+                        }],
+                      };
+                    },
+                  };
+                },
+              };
+            },
+            doc(id) {
+              assert.equal(id, 'user-staff-1');
+              return {
+                async update(payload) {
+                  updates.push(payload.data);
+                  return {};
+                },
+              };
+            },
+          };
+        },
+      },
+    });
+
+    assert.equal(result.identity, 'staff');
+    assert.equal(result.entryPage, '/pages/staff/home/index');
+    assert.deepEqual(result.permissions, ['menu.manage', 'meal.manage', 'orders.update']);
+    assert.equal(result.user.role, 'staff');
+    assert.equal(result.staff.staffId, 's1002');
+    assert.equal(result.bindingRequired, false);
+    assert.equal(memberQueried, false);
+    assert.deepEqual(updates, [{ openid: 'openid-staff-1', updatedAt: '2026/11/18 09:00:00' }]);
+  });
+
+  await test('bindMemberPhone 停用员工不允许绑定', async () => {
+    const { main } = require('../cloudfunctions/bindMemberPhone/index');
+
+    await assert.rejects(
+      () => main({ code: 'phone-code' }, {
+        OPENID: 'openid-staff-2',
+        phoneInfo: { phoneNumber: '13800002222' },
+        db: {
+          collection() {
+            return {
+              where() {
+                return {
+                  limit() {
+                    return {
+                      async get() {
+                        return {
+                          data: [{
+                            _id: 'user-staff-2',
+                            openid: '',
+                            role: 'staff',
+                            staffId: 's1003',
+                            phone: '13800002222',
+                            active: false,
+                          }],
+                        };
+                      },
+                    };
+                  },
+                };
+              },
+            };
+          },
+        },
+      }),
+      /已停用/
+    );
+  });
+
+  await test('bindMemberPhone 员工已绑定其他微信时拒绝', async () => {
+    const { main } = require('../cloudfunctions/bindMemberPhone/index');
+
+    await assert.rejects(
+      () => main({ code: 'phone-code' }, {
+        OPENID: 'openid-staff-3',
+        phoneInfo: { phoneNumber: '13800003333' },
+        db: {
+          collection() {
+            return {
+              where() {
+                return {
+                  limit() {
+                    return {
+                      async get() {
+                        return {
+                          data: [{
+                            _id: 'user-staff-3',
+                            openid: 'openid-other-staff',
+                            role: 'staff',
+                            staffId: 's1004',
+                            phone: '13800003333',
+                            active: true,
                           }],
                         };
                       },

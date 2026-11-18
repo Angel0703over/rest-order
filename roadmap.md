@@ -166,3 +166,12 @@
 - [x] 验证顾客端点单页：左侧分类栏 + 8 款餐食卡片 + 房间桌号 + 等级角标 + 底部三 Tab，无白屏与 console 报错。
 - [x] 确认 `users` 集合**已存在店长记录**（openid `oSdR31...`，staffId `s1001`），无需再初始化。
 - [x] 记录坑：`check_wechatide_status` 返回的 `loginUser.openid` 是**开发者工具账号** openid，与**小程序内 openid** 不同，不能用于 `users` 集合。
+
+## 2026-11-18 员工微信绑定（修复员工端无法登录）
+- [x] 定位缺陷：`adminStaff` 新建员工写 `openid: ''`，编辑不写 `openid`，员工页也无该字段，`bindMemberPhone` 只创建 `customer`，绑定页固定跳顾客首页 —— 员工**没有任何绑定入口**，登录必然降级为顾客。
+- [x] `bindMemberPhone` 改为双分支：先按手机号匹配 `users` 中 `role != customer` 的员工记录（员工优先），命中则写入 openid 并返回员工/店长入口与权限；未命中再走原会员绑定逻辑。
+- [x] 员工分支增加校验：已停用（`active: false`）拒绝、手机号已被其他微信绑定拒绝、同手机号多个员工账号拒绝。
+- [x] 绑定返回值新增 `identity`（`staff` / `customer`）与 `permissions`；会员分支保持原结构不变。
+- [x] `pages/bind-phone` 按返回或重登后的 `entryPage` 跳转（`redirectToEntryPage`），不再固定 `switchTab` 到顾客首页；文案从「绑定会员手机号」改为「绑定手机号」，导航标题改为「绑定身份」。
+- [x] 测试新增 3 条（员工绑定成功且不再查会员、停用员工拒绝、员工已绑他人拒绝），全量 99 条 PASS。
+- [ ] 真机验证：员工用自己的微信首次进入 → 授权手机号 → 应落到 `/pages/staff/home/index`。

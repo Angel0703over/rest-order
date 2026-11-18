@@ -242,8 +242,9 @@ node scripts/generate-users-seed.js --openid o店员的openid --role staff --nam
 说明：
 
 - 店长端“员工管理”页会通过 `adminStaff` 读取、创建、保存和停用 `users` 中的员工记录。
-- 新增员工时 `openid` 先为空；员工要真正登录员工端时，需要把该员工微信登录得到的真实 `openid` 绑定到对应记录。
-- 停用员工会把 `active` 改成 `false`，不会物理删除记录；停用后该 openid 再登录会进入无权限页。
+- 新增员工时 `openid` 先为空（**手机号必须填写**）。员工用自己的微信首次打开小程序时，`login` 会因为没有 openid 匹配而落到 `/pages/bind-phone/index`；在该页授权手机号后，`bindMemberPhone` 按手机号命中员工记录并写回 `openid`，随后进入员工端。
+- `bindMemberPhone` 采用双分支：**先按手机号匹配 `users` 中 `role` 非 `customer` 的员工记录（员工优先），未命中再匹配 `members` 会员**。因此同一手机号既是员工又是会员时，绑定结果为员工身份。
+- 停用员工会把 `active` 改成 `false`，不会物理删除记录；停用后该 openid 再登录会进入无权限页，重新绑定也会被拒绝。
 
 ## 门店设置 settings
 

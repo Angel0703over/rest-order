@@ -3,19 +3,19 @@
 
   <view class="hero">
     <view class="eyebrow">扫码进入</view>
-    <view class="title">绑定会员手机号</view>
-    <view class="subtitle">使用微信手机号匹配门店会员资料，绑定成功后即可按会员等级点单。</view>
+    <view class="title">绑定手机号</view>
+    <view class="subtitle">使用微信手机号匹配门店身份：会员绑定后按等级点单，员工绑定后进入员工端。</view>
   </view>
 
   <view class="panel">
-    <view class="section-title">会员验证</view>
+    <view class="section-title">身份验证</view>
     <view class="info-row">
       <view class="info-label">匹配方式</view>
       <view class="info-value">微信手机号授权</view>
     </view>
     <view class="info-row">
-      <view class="info-label">会员来源</view>
-      <view class="info-value">门店会员表手机号</view>
+      <view class="info-label">身份来源</view>
+      <view class="info-value">员工名单优先，其次会员表</view>
     </view>
     <button
       class="bind-button"
